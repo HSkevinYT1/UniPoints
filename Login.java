@@ -212,7 +212,8 @@ class RoundedPasswordField extends JPasswordField {
                 repaint();
         }
 
-        //esto es un comentario
+        // esto es un comentario
+        // esto es otro comentario. -Kevin
 
         @Override
         protected void paintComponent(Graphics g) {
