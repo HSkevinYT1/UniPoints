@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.RoundRectangle2D;
 
 public class Login extends JFrame {
 
@@ -31,20 +32,20 @@ public class Login extends JFrame {
                 // --- PANEL DERECHO (Formulario) ---
                 JPanel rightPanel = new JPanel(null);
                 rightPanel.setBackground(new Color(9, 12, 16));
-                rightPanel.setBorder(new EmptyBorder(80, 50, 60, 50));
+                rightPanel.setBorder(new EmptyBorder(120, 50, 60, 50));
 
                 // Título: ¡Bienvenido!
                 JLabel title = new JLabel("¡Bienvenido!", SwingConstants.CENTER);
                 title.setForeground(Color.WHITE);
                 title.setFont(new Font("SansSerif", Font.BOLD, 38));
-                title.setBounds(50, 50, 400, 50);
+                title.setBounds(80, 50, 400, 50);
                 rightPanel.add(title);
 
                 // Etiqueta: Usuario
                 JLabel userLabel = new JLabel("Correo electrónico o usuario");
                 userLabel.setForeground(new Color(180, 180, 180));
                 userLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
-                userLabel.setBounds(40, 130, 300, 30);
+                userLabel.setBounds(70, 130, 300, 30);
                 rightPanel.add(userLabel);
 
                 // Campo: Usuario (con icono)
@@ -52,14 +53,14 @@ public class Login extends JFrame {
                 Image scaledUser = userIcon.getImage().getScaledInstance(22, -1, Image.SCALE_SMOOTH);
                 RoundedTextField userField = new RoundedTextField("Ingresa tu correo o usuario",
                                 new ImageIcon(scaledUser));
-                userField.setBounds(40, 170, 430, 55);
+                userField.setBounds(70, 170, 430, 55);
                 rightPanel.add(userField);
 
                 // Etiqueta: Contraseña
                 JLabel passLabel = new JLabel("Contraseña");
                 passLabel.setForeground(new Color(180, 180, 180));
                 passLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
-                passLabel.setBounds(40, 260, 300, 30);
+                passLabel.setBounds(70, 260, 300, 30);
                 rightPanel.add(passLabel);
 
                 // Campo: Contraseña (con icono)
@@ -67,7 +68,7 @@ public class Login extends JFrame {
                 Image scaledLock = lockIcon.getImage().getScaledInstance(22, -1, Image.SCALE_SMOOTH);
                 RoundedPasswordField passField = new RoundedPasswordField("Ingresa tu contraseña",
                                 new ImageIcon(scaledLock));
-                passField.setBounds(40, 300, 430, 55);
+                passField.setBounds(70, 300, 430, 55);
                 rightPanel.add(passField);
 
                 // Texto: Olvidaste contraseña
@@ -76,6 +77,11 @@ public class Login extends JFrame {
                 forgotPassword.setFont(new Font("SansSerif", Font.BOLD, 15));
                 forgotPassword.setBounds(250, 365, 250, 30);
                 rightPanel.add(forgotPassword);
+
+                // --- BOTÓN: Iniciar sesión ---
+                RoundedButton loginBtn = new RoundedButton("Iniciar sesión");
+                loginBtn.setBounds(80, 415, 430, 55);
+                rightPanel.add(loginBtn);
 
                 // Ensamblado final
                 container.add(leftPanel);
@@ -91,9 +97,80 @@ public class Login extends JFrame {
         }
 }
 
-/**
- * TextField personalizado con bordes redondeados, icono y placeholder.
- */
+// Botón redondeado verde de inicio de sesion
+
+class RoundedButton extends JButton {
+
+        private static final Color COLOR_NORMAL = new Color(34, 197, 94); // verde principal
+        private static final Color COLOR_HOVER = new Color(22, 163, 74); // verde más oscuro al pasar el mouse
+        private static final Color COLOR_PRESS = new Color(15, 130, 55); // verde más oscuro al hacer clic
+        private static final int ARC = 14; // radio de esquinas
+
+        private Color currentColor = COLOR_NORMAL;
+
+        public RoundedButton(String text) {
+                super(text);
+                setOpaque(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setFocusPainted(false);
+                setForeground(Color.WHITE);
+                setFont(new Font("SansSerif", Font.BOLD, 20));
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                // Efecto hover y presión
+                addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                                currentColor = COLOR_HOVER;
+                                repaint();
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                                currentColor = COLOR_NORMAL;
+                                repaint();
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                                currentColor = COLOR_PRESS;
+                                repaint();
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                                currentColor = COLOR_HOVER;
+                                repaint();
+                        }
+                });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Fondo redondeado del botón
+                g2.setColor(currentColor);
+                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), ARC * 2, ARC * 2));
+
+                // Texto centrado
+                g2.setFont(getFont());
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                int textX = (getWidth() - fm.stringWidth(getText())) / 2;
+                int textY = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+                g2.drawString(getText(), textX, textY);
+
+                g2.dispose();
+        }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TextField personalizado con bordes redondeados, icono y placeholder
+// ─────────────────────────────────────────────────────────────────────────────
 class RoundedTextField extends JTextField {
         private String placeholder;
         private Icon icon;
@@ -119,11 +196,9 @@ class RoundedTextField extends JTextField {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Dibujar Fondo
                 g2.setColor(new Color(15, 18, 25));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
 
-                // Dibujar Icono
                 if (icon != null) {
                         int iconWidth = icon.getIconWidth();
                         int iconHeight = icon.getIconHeight();
@@ -134,7 +209,6 @@ class RoundedTextField extends JTextField {
 
                 super.paintComponent(g);
 
-                // Dibujar Placeholder
                 if (getText().isEmpty()) {
                         g2.setColor(new Color(120, 120, 120));
                         g2.setFont(getFont());
@@ -155,10 +229,10 @@ class RoundedTextField extends JTextField {
         }
 }
 
-/**
- * PasswordField personalizado con bordes redondeados, icono y toggle de
- * visibilidad.
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// PasswordField personalizado con bordes redondeados, icono y toggle
+// visibilidad
+// ─────────────────────────────────────────────────────────────────────────────
 class RoundedPasswordField extends JPasswordField {
         private String placeholder;
         private Icon icon;
@@ -212,43 +286,32 @@ class RoundedPasswordField extends JPasswordField {
                 repaint();
         }
 
-        // esto es un comentario
-        // esto es otro comentario. -Kevin
-
         @Override
         protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Fondo
                 g2.setColor(new Color(15, 18, 25));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
 
-                // Icono Izquierdo (Candado)
                 if (icon != null) {
                         int x = 15;
                         int y = (getHeight() - 22) / 2;
                         icon.paintIcon(this, g2, x, y);
                 }
 
-                // Icono Derecho (Ojo - Usando el proporcionado)
                 if (eyeIcon != null) {
                         int x = getWidth() - 40;
                         int y = (getHeight() - eyeIcon.getIconHeight()) / 2;
-
-                        // Si la visibilidad está activada, podemos darle un efecto visual al icono
-                        // para diferenciarlo, o simplemente dejarlo como está si solo hay uno.
                         if (isPasswordVisible) {
                                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                         }
-
                         eyeIcon.paintIcon(this, g2, x, y);
                         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
                 }
 
                 super.paintComponent(g);
 
-                // Placeholder
                 if (getPassword().length == 0) {
                         g2.setColor(new Color(120, 120, 120));
                         g2.setFont(getFont());
