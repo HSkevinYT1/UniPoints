@@ -17,8 +17,8 @@ public class VentanaJuegos {
         ventana.setTitle("Unab Points");
         ventana.setSize(1300, 850);
         ventana.setLocationRelativeTo(null);
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ventana.setResizable(false);
+        ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         // -----------------------------
 
         // Contenedor principal
@@ -94,19 +94,18 @@ public class VentanaJuegos {
         contenedorCentral.setOpaque(false);
 
         // A. El texto de bienvenida
-        JLabel placeholder = new JLabel("<html><div style='text-align: center; color: white;'>"
-                + "<h1 style='font-size: 30px;'>Bienvenido a la Sala</h1><br>"
-                + "<p style='font-size: 14px;'>Selecciona una categoría arriba para comenzar.</p><br>"
-                + "</div></html>");
-        placeholder.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // B. LLAMADA AL MÉTODO DEL BOTÓN
         // Aquí es donde invocas el método creado arriba
         JButton btnJugar = crearBotonJuego("¡JUGAR AHORA!", new Color(34, 197, 94));
         btnJugar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnJugar.addActionListener(e ->{
+            JuegoCarrera segundaVentana = new JuegoCarrera();
+            segundaVentana.setVisible(true);
+            Window ventanaActual = SwingUtilities.getWindowAncestor(btnJugar);
+            ventanaActual.dispose();
+        });
 
-        // Añadimos los elementos al contenedor central
-        contenedorCentral.add(placeholder);
         contenedorCentral.add(Box.createVerticalStrut(20)); // Espacio entre texto y botón
         contenedorCentral.add(btnJugar);
 
@@ -136,4 +135,5 @@ public class VentanaJuegos {
 
         return boton;
     }
+
 }
