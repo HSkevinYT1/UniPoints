@@ -115,7 +115,7 @@ public class Login extends JFrame {
 
                 // Campo: Usuario (con icono)
                 ImageIcon userIcon = new ImageIcon("Icons/user.png");
-                Image scaledUser = userIcon.getImage().getScaledInstance(22, -1, Image.SCALE_SMOOTH);
+                Image scaledUser = userIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
                 RoundedTextField userField = new RoundedTextField("Ingresa tu correo o usuario",
                                 new ImageIcon(scaledUser));
                 userField.setBounds(70, 170, 430, 55);
@@ -130,7 +130,7 @@ public class Login extends JFrame {
 
                 // Campo: Contraseña (con icono)
                 ImageIcon lockIcon = new ImageIcon("Icons/lock.png");
-                Image scaledLock = lockIcon.getImage().getScaledInstance(22, -1, Image.SCALE_SMOOTH);
+                Image scaledLock = lockIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
                 RoundedPasswordField passField = new RoundedPasswordField("Ingresa tu contraseña",
                                 new ImageIcon(scaledLock));
                 passField.setBounds(70, 280, 430, 55);
@@ -162,6 +162,43 @@ public class Login extends JFrame {
                 SocialButton facebookBtn = new SocialButton("Facebook", "Icons/facebook.png");
                 facebookBtn.setBounds(295, 540, 205, 55);
                 rightPanel.add(facebookBtn);
+
+                // Texto: ¿No tienes cuenta? Regístrate
+                JPanel registerLinkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+                registerLinkPanel.setOpaque(false);
+                registerLinkPanel.setBounds(70, 620, 430, 25);
+
+                JLabel registerText = new JLabel("¿No tienes una cuenta?");
+                registerText.setForeground(new Color(180, 180, 180));
+                registerText.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+                JLabel registerLink = new JLabel("Regístrate");
+                registerLink.setForeground(new Color(29, 200, 35));
+                registerLink.setFont(new Font("SansSerif", Font.BOLD, 15));
+                registerLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                // Acción: abrir Register y cerrar Login
+                registerLink.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                                new Register();
+                                dispose();
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                                registerLink.setForeground(new Color(22, 163, 74));
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                                registerLink.setForeground(new Color(29, 200, 35));
+                        }
+                });
+
+                registerLinkPanel.add(registerText);
+                registerLinkPanel.add(registerLink);
+                rightPanel.add(registerLinkPanel);
 
                 // Ensamblado final
                 container.add(leftPanel);
@@ -319,7 +356,9 @@ class FeatureIcon extends JPanel {
 
                 try {
                         ImageIcon rawIcon = new ImageIcon(iconPath);
-                        Image scaled = rawIcon.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH);
+                        // El escudo suele verse más grande, así que le damos un tamaño menor que a los otros
+                        int size = iconPath.contains("shield") ? 40 : 48;
+                        Image scaled = rawIcon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
                         JLabel iconLabel = new JLabel(new ImageIcon(scaled));
                         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
                         add(iconLabel);
@@ -469,7 +508,7 @@ class RoundedPasswordField extends JPasswordField {
                 try {
                         ImageIcon rawIcon = new ImageIcon("Icons/password_hide.png");
                         eyeIcon = new ImageIcon(
-                                        rawIcon.getImage().getScaledInstance(EYE_ICON_SIZE, -1, Image.SCALE_SMOOTH));
+                                        rawIcon.getImage().getScaledInstance(EYE_ICON_SIZE, EYE_ICON_SIZE, Image.SCALE_SMOOTH));
                 } catch (Exception e) {
                         System.err.println("No se pudo cargar el icono Icons/password_hide.png");
                 }
