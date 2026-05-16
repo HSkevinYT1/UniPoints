@@ -9,7 +9,7 @@ public class VentanaJuegos {
         crearVentanaLimpia();
     }
 
-    private static void crearVentanaLimpia() {
+    public static void crearVentanaLimpia() {
         JFrame ventana = new JFrame();
         ventana.setTitle("Unab Points");
         ventana.setSize(1300, 850);
