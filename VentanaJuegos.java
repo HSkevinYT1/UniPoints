@@ -89,9 +89,9 @@ public class VentanaJuegos {
 
         // 2. Bingo
         rejillaJuegos.add(crearCardJuego("Bingo","Icons/BingoGame.png", new Color(120, 43, 244), e -> {
-            /* [REDIRECCIÓN JUEGO BINGO] */
-            // VentanaBingo v = new VentanaBingo();
-            // v.setVisible(true);
+            JuegoBingo bingo = new JuegoBingo();
+            bingo.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 3. Penales
