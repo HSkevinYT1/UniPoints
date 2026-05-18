@@ -57,6 +57,7 @@ public class Chat extends JFrame {
     private static final Image ICON_INFO = new ImageIcon("Icons/Info.png").getImage();
     private static final Image ICON_SEND = new ImageIcon("Icons/SendMessage.png").getImage();
     private static final Image ICON_USER = new ImageIcon("Icons/UserDefaultpfp.png").getImage();
+
     // CONSTRUCTOR
     public Chat() {
         initData();
@@ -83,6 +84,7 @@ public class Chat extends JFrame {
 
         setVisible(true);
     }
+
     // DATOS
     private void initData() {
         contacts.add(new Contact("Kevin Bayona", "Ey!", true, 1, "11:42"));
@@ -111,6 +113,7 @@ public class Chat extends JFrame {
         m5.add(new Message("Buena partida!", "text", true, "Lunes"));
         conversations.put("Gustavo Rueda", m5);
     }
+
     // RAIZ UI
     private void buildUI() {
         JPanel root = new JPanel(new BorderLayout());
@@ -119,6 +122,7 @@ public class Chat extends JFrame {
         root.add(buildRightPanel(), BorderLayout.CENTER);
         setContentPane(root);
     }
+
     // PANEL IZQUIERDO
     private JPanel buildLeftPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -140,7 +144,28 @@ public class Chat extends JFrame {
             g2.drawImage(ICON_ADD, 4, 4, 26, 26, null);
         });
 
-        header.add(title, BorderLayout.WEST);
+        JPanel leftContainer = new JPanel();
+        leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.X_AXIS));
+        leftContainer.setOpaque(false);
+
+        // Botón volver
+        JPanel backBtn = makeIconBtn(() -> {
+            new MainMenu();
+            dispose();
+        }, g2 -> {
+            g2.setColor(TEXT_PRIMARY);
+            g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            // Dibujar una flecha apuntando a la izquierda "←"
+            g2.drawLine(10, 17, 24, 17);
+            g2.drawLine(10, 17, 16, 11);
+            g2.drawLine(10, 17, 16, 23);
+        });
+
+        leftContainer.add(backBtn);
+        leftContainer.add(Box.createHorizontalStrut(8));
+        leftContainer.add(title);
+
+        header.add(leftContainer, BorderLayout.WEST);
         header.add(addBtn, BorderLayout.EAST);
 
         // Buscador
@@ -165,6 +190,7 @@ public class Chat extends JFrame {
         panel.add(listScroll, BorderLayout.CENTER);
         return panel;
     }
+
     private JPanel buildSearchBar() {
         boolean[] foc = searchFocused;
 
@@ -270,6 +296,7 @@ public class Chat extends JFrame {
         contactListPanel.revalidate();
         contactListPanel.repaint();
     }
+
     private JPanel buildContactRow(Contact contact) {
         boolean[] hov = { false };
         JPanel row = new JPanel(new BorderLayout(12, 0)) {
@@ -380,6 +407,7 @@ public class Chat extends JFrame {
         b.setOpaque(false);
         return b;
     }
+
     // PANEL DERECHO
     private JPanel buildRightPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -499,6 +527,7 @@ public class Chat extends JFrame {
         chatScrollPane = styledScroll(chatMessagesPanel);
         return chatScrollPane;
     }
+
     // BARRA DE ENTRADA
     private JPanel buildInputBar() {
         JPanel bar = new JPanel(new BorderLayout(10, 0)) {
@@ -618,6 +647,7 @@ public class Chat extends JFrame {
         inputBarPanel.setVisible(false);
         return bar;
     }
+
     // EMOJI PICKER
     private JPopupMenu emojiPopup = null;
 
@@ -692,6 +722,7 @@ public class Chat extends JFrame {
         // Mostrar encima del campo de texto
         emojiPopup.show(inputField, 0, -grid.getPreferredSize().height - 28);
     }
+
     // MULTIMEDIA
     private void openFilePicker() {
         if (selectedContact == null)
@@ -724,6 +755,7 @@ public class Chat extends JFrame {
         return n.endsWith(".png") || n.endsWith(".jpg") || n.endsWith(".jpeg")
                 || n.endsWith(".gif") || n.endsWith(".bmp") || n.endsWith(".webp");
     }
+
     // MENÚ INFO (botón i)
     private void showInfoMenu(Component anchor) {
         if (selectedContact == null)
@@ -773,6 +805,7 @@ public class Chat extends JFrame {
         refreshContactList();
         showToast("Has bloqueado a " + name);
     }
+
     // DIÁLOGO AÑADIR CONTACTO
     private void showAddContactDialog() {
         JDialog dlg = new JDialog(this, "A\u00f1adir contacto", true);
@@ -823,6 +856,7 @@ public class Chat extends JFrame {
         dlg.setContentPane(content);
         dlg.setVisible(true);
     }
+
     // TOAST
     private void showToast(String msg) {
         JWindow toast = new JWindow(this);
@@ -844,6 +878,7 @@ public class Chat extends JFrame {
         t.setRepeats(false);
         t.start();
     }
+
     // LÓGICA CHAT
     private void selectContact(Contact contact) {
         selectedContact = contact;
@@ -868,8 +903,9 @@ public class Chat extends JFrame {
         }
 
         List<Message> msgs = conversations.getOrDefault(selectedContact.name, new ArrayList<>());
-        String dateLabel = (selectedContact.time != null && !selectedContact.time.contains(":")) 
-            ? selectedContact.time : "Hoy";
+        String dateLabel = (selectedContact.time != null && !selectedContact.time.contains(":"))
+                ? selectedContact.time
+                : "Hoy";
         chatMessagesPanel.add(buildDateSeparator(dateLabel));
         chatMessagesPanel.add(Box.createVerticalStrut(10));
         for (Message m : msgs) {
@@ -931,6 +967,7 @@ public class Chat extends JFrame {
         t.setRepeats(false);
         t.start();
     }
+
     // CONSTRUCTORES DE BURBUJA Y SEPARADOR
     private JPanel buildDateSeparator(String label) {
         JPanel sep = new JPanel(new GridBagLayout()) {
@@ -1018,6 +1055,7 @@ public class Chat extends JFrame {
         wrapper.add(bubble);
         return wrapper;
     }
+
     // HELPERS
     interface Painter {
         void paint(Graphics2D g2);
@@ -1176,6 +1214,7 @@ public class Chat extends JFrame {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         return g2;
     }
+
     // CLASES DE DATOS
     static class Contact {
         String name, lastMessage, time;
@@ -1205,6 +1244,7 @@ public class Chat extends JFrame {
             this.time = time;
         }
     }
+
     // SCROLLBAR SLIM
     static class SlimScrollBarUI extends BasicScrollBarUI {
         @Override
@@ -1241,6 +1281,7 @@ public class Chat extends JFrame {
         protected void paintTrack(Graphics g, JComponent c, Rectangle r) {
         }
     }
+
     // MAIN
     public static void main(String[] args) {
         System.setProperty("awt.useSystemAAFontSettings", "on");

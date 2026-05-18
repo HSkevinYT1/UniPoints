@@ -137,6 +137,40 @@ public class Register extends JFrame {
         // BOTÓN: Crear cuenta
         RoundedButton registerBtn = new RoundedButton("Crear cuenta");
         registerBtn.setBounds(70, 500, 430, 55);
+        
+        // Acción: registrar usuario
+        registerBtn.addActionListener(e -> {
+            String name = nameField.getText().trim();
+            String email = emailField.getText().trim();
+            String username = usernameField.getText().trim();
+            String pass = new String(passField.getPassword());
+            String confirmPass = new String(confirmPassField.getPassword());
+
+            if (name.isEmpty() || email.isEmpty() || username.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor llena todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!pass.equals(confirmPass)) {
+                JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!checkboxPanel.isChecked()) {
+                JOptionPane.showMessageDialog(this, "Debes aceptar los términos y condiciones", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Usuario nuevoUsuario = new Usuario(name, email, username, pass);
+            if (Usuario.registrarUsuario(nuevoUsuario)) {
+                JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente. ¡Bienvenido!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                new Login();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "El correo o nombre de usuario ya está registrado", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
         rightPanel.add(registerBtn);
 
         // SECCIÓN: Social Login

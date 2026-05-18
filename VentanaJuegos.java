@@ -19,7 +19,7 @@ public class VentanaJuegos {
         JPanel contenedorPrincipal = new JPanel(new BorderLayout());
         contenedorPrincipal.setBackground(new Color(13, 13, 13));
 
-        contenedorPrincipal.add(crearEncabezado(), BorderLayout.NORTH);
+        contenedorPrincipal.add(crearEncabezado(ventana), BorderLayout.NORTH);
 
         // El cuerpo ahora es un JScrollPane por si añades más juegos
         JScrollPane scroll = new JScrollPane(crearCuerpo());
@@ -30,18 +30,80 @@ public class VentanaJuegos {
         ventana.setVisible(true);
     }
 
-    private static JPanel crearEncabezado() {
+    private static JPanel crearEncabezado(JFrame ventana) {
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBackground(new Color(13, 13, 13));
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
+        JPanel contenedorIzquierdo = new JPanel();
+        contenedorIzquierdo.setLayout(new BoxLayout(contenedorIzquierdo, BoxLayout.X_AXIS));
+        contenedorIzquierdo.setOpaque(false);
+
+        JPanel btnVolver = crearBotonVolver(ventana);
+
         JLabel lblTitulo = new JLabel("Minijuegos");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 26));
-        panelSuperior.add(lblTitulo, BorderLayout.WEST);
+
+        contenedorIzquierdo.add(btnVolver);
+        contenedorIzquierdo.add(Box.createHorizontalStrut(10));
+        contenedorIzquierdo.add(lblTitulo);
+
+        panelSuperior.add(contenedorIzquierdo, BorderLayout.WEST);
 
         panelSuperior.add(crearSeccionUsuario(), BorderLayout.EAST);
         return panelSuperior;
+    }
+
+    private static JPanel crearBotonVolver(JFrame ventana) {
+        boolean[] hov = { false };
+        JPanel btn = new JPanel() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(36, 36);
+            }
+            @Override
+            public Dimension getMinimumSize() {
+                return getPreferredSize();
+            }
+            @Override
+            public Dimension getMaximumSize() {
+                return getPreferredSize();
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (hov[0]) {
+                    g2.setColor(new Color(255, 255, 255, 14));
+                    g2.fillRoundRect(2, 2, 32, 32, 8, 8);
+                }
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                // Dibujar flecha hacia la izquierda "←"
+                g2.drawLine(11, 18, 25, 18);
+                g2.drawLine(11, 18, 17, 12);
+                g2.drawLine(11, 18, 17, 24);
+                g2.dispose();
+            }
+        };
+        btn.setOpaque(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                hov[0] = true;
+                btn.repaint();
+            }
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                hov[0] = false;
+                btn.repaint();
+            }
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                new MainMenu();
+                ventana.dispose();
+            }
+        });
+        return btn;
     }
 
     private static JPanel crearSeccionUsuario() {

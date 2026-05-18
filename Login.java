@@ -146,6 +146,27 @@ public class Login extends JFrame {
                 // BOTÓN: Iniciar sesión
                 RoundedButton loginBtn = new RoundedButton("Iniciar sesión");
                 loginBtn.setBounds(80, 400, 430, 55);
+                
+                // Acción: iniciar sesión
+                loginBtn.addActionListener(e -> {
+                        String identifier = userField.getText().trim();
+                        String pass = new String(passField.getPassword());
+
+                        if (identifier.isEmpty() || pass.isEmpty()) {
+                                JOptionPane.showMessageDialog(this, "Por favor llena todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                        }
+
+                        if (Usuario.iniciarSesion(identifier, pass)) {
+                                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                                // Abre el menú principal
+                                new MainMenu();
+                                dispose();
+                        } else {
+                                JOptionPane.showMessageDialog(this, "Credenciales incorrectas", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                });
+                
                 rightPanel.add(loginBtn);
 
                 // SECCIÓN: Social Login
