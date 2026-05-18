@@ -107,7 +107,7 @@ public class Chat extends JFrame {
 
         List<Message> m4 = new ArrayList<>();
         m4.add(new Message("Buena partida!", "text", true, "Ayer"));
-        conversations.put("Alejandro Prada", m4);
+        conversations.put("Alejandro Pradilla", m4);
 
         List<Message> m5 = new ArrayList<>();
         m5.add(new Message("Buena partida!", "text", true, "Lunes"));

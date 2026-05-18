@@ -9,7 +9,7 @@ public class JuegoCarrera extends JFrame {
 
     private int monedasJugador = 1200;
     private String nombreJugador = "juan cacorro";
-    private ImageIcon iconoJugador = null;  
+    private ImageIcon iconoJugador = null;
 
     // Variables del juego
     private int montoApuesta = 500;
