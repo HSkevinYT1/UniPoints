@@ -24,7 +24,19 @@ public class History extends JFrame {
                 setTitle("Actividad reciente");
                 setSize(900, 600); // Tamaño un poco más amplio para que quepa bien el header y contenido
                 setLocationRelativeTo(null);
-                setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                // Preservar estado de pantalla completa
+                boolean maximizado = false;
+                for (java.awt.Frame f : java.awt.Frame.getFrames()) {
+                    if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
+                        maximizado = true;
+                        break;
+                    }
+                }
+                if (maximizado) {
+                    setExtendedState(JFrame.MAXIMIZED_BOTH);
+                }
 
                 // PANEL PRINCIPAL
                 JPanel panelPrincipal = new JPanel();
@@ -80,6 +92,7 @@ public class History extends JFrame {
                 panelPrincipal.add(scroll, BorderLayout.CENTER);
 
                 add(panelPrincipal);
+                setVisible(true);
         }
 
         // ════════════════════════════════════════════════════════

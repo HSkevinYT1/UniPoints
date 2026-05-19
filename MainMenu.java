@@ -3,6 +3,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MainMenu extends JFrame {
 
@@ -17,15 +19,27 @@ public class MainMenu extends JFrame {
     private static final Color TEXT_SECONDARY = new Color(150, 155, 145);
     private static final Color HEADER_BG = new Color(14, 16, 12);
 
-    // FUENTES
-    private static final Font FONT_LOGO = new Font("SansSerif", Font.BOLD, 20);
-    private static final Font FONT_WELCOME = new Font("SansSerif", Font.BOLD, 38);
-    private static final Font FONT_SUBTITLE = new Font("SansSerif", Font.PLAIN, 17);
-    private static final Font FONT_CARD_TITLE = new Font("SansSerif", Font.BOLD, 15);
-    private static final Font FONT_BADGE = new Font("SansSerif", Font.BOLD, 14);
-    private static final Font FONT_ARROW = new Font("SansSerif", Font.PLAIN, 16);
+    // FUENTES BASE (Se escalan dinámicamente)
+    private static final Font FONT_WELCOME_BASE = new Font("SansSerif", Font.BOLD, 38);
+    private static final Font FONT_SUBTITLE_BASE = new Font("SansSerif", Font.PLAIN, 17);
+    private static final Font FONT_CARD_TITLE_BASE = new Font("SansSerif", Font.BOLD, 15);
+    private static final Font FONT_ARROW_BASE = new Font("SansSerif", Font.PLAIN, 16);
 
     private String userName;
+    private float currentScale = 1.0f;
+
+    // Componentes para escala dinámica
+    private JLabel welcomeLabel;
+    private JLabel subtitleLabel;
+    private JPanel welcomePanel;
+    private JPanel content;
+    private JPanel gridPanel;
+    private GridLayout gridLayout;
+    private JPanel headerPanel;
+    private JPanel rightPanel;
+    
+    // Lista de tarjetas para escala dinámica
+    private List<MenuCardPanel> cardsList = new ArrayList<>();
 
     public MainMenu() {
         Usuario actual = Usuario.getUsuarioActual();
@@ -33,9 +47,22 @@ public class MainMenu extends JFrame {
 
         setTitle("Unab Points - Menú Principal");
         setSize(1300, 850);
+        setMinimumSize(new Dimension(1300, 850));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
+
+        // Preservar estado de pantalla completa
+        boolean maximizado = false;
+        for (java.awt.Frame f : java.awt.Frame.getFrames()) {
+            if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
+                maximizado = true;
+                break;
+            }
+        }
+        if (maximizado) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
 
         JPanel root = new JPanel(new BorderLayout()) {
             @Override
@@ -51,7 +78,7 @@ public class MainMenu extends JFrame {
                 // Resplandor verde sutil en el centro
                 RadialGradientPaint glow = new RadialGradientPaint(
                         new Point2D.Float(getWidth() / 2f, getHeight() / 2.5f),
-                        400f,
+                        400f * currentScale,
                         new float[] { 0f, 0.4f, 1f },
                         new Color[] {
                                 new Color(20, 80, 20, 60),
@@ -62,7 +89,7 @@ public class MainMenu extends JFrame {
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
                 // Texto "UP" fantasma en el fondo
-                g2.setFont(new Font("SansSerif", Font.BOLD, 200));
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(200 * currentScale)));
                 g2.setColor(new Color(30, 40, 28, 30));
                 FontMetrics fm = g2.getFontMetrics();
                 String watermark = "UP";
@@ -75,11 +102,79 @@ public class MainMenu extends JFrame {
         };
         root.setOpaque(false);
 
-        root.add(buildHeader(), BorderLayout.NORTH);
-        root.add(buildContent(), BorderLayout.CENTER);
+        headerPanel = buildHeader();
+        welcomePanel = buildWelcomePanel();
+        content = buildContent();
+
+        root.add(headerPanel, BorderLayout.NORTH);
+        
+        // Panel contenedor para la zona de contenido (Bienvenida arriba + Accesos centrados)
+        JPanel mainAreaPanel = new JPanel(new BorderLayout());
+        mainAreaPanel.setOpaque(false);
+        
+        // Bienvenida arriba a la izquierda
+        mainAreaPanel.add(welcomePanel, BorderLayout.NORTH);
+        
+        // Accesos centrados perfectamente
+        JPanel centerContainer = new JPanel(new GridBagLayout());
+        centerContainer.setOpaque(false);
+        centerContainer.add(content);
+        mainAreaPanel.add(centerContainer, BorderLayout.CENTER);
+        
+        root.add(mainAreaPanel, BorderLayout.CENTER);
 
         setContentPane(root);
         setVisible(true);
+
+        // Control dinámico de escala tipo CanvasScaler de Unity
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                float scaleX = getWidth() / 1300f;
+                float scaleY = getHeight() / 850f;
+                currentScale = Math.min(scaleX, scaleY);
+                if (currentScale < 0.8f) currentScale = 0.8f;
+                if (currentScale > 1.6f) currentScale = 1.6f; // Límite para mantener la elegancia
+
+                // Escalar etiquetas de bienvenida
+                if (welcomeLabel != null) {
+                    welcomeLabel.setFont(new Font("SansSerif", Font.BOLD, (int)(38 * currentScale)));
+                }
+                if (subtitleLabel != null) {
+                    subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, (int)(17 * currentScale)));
+                }
+
+                // Escalar bordes y espaciados
+                if (welcomePanel != null) {
+                    welcomePanel.setBorder(new EmptyBorder((int)(10 * currentScale), (int)(60 * currentScale), 0, (int)(60 * currentScale)));
+                }
+                if (content != null) {
+                    content.setBorder(new EmptyBorder(0, (int)(60 * currentScale), (int)(40 * currentScale), (int)(60 * currentScale)));
+                }
+                if (gridLayout != null && gridPanel != null) {
+                    int gap = (int)(22 * currentScale);
+                    gridLayout.setHgap(gap);
+                    gridLayout.setVgap(gap);
+                    gridPanel.setMaximumSize(new Dimension((int)(1180 * currentScale), (int)(460 * currentScale)));
+                    gridPanel.setPreferredSize(new Dimension((int)(1180 * currentScale), (int)(460 * currentScale)));
+                }
+                if (headerPanel != null) {
+                    headerPanel.setBorder(new EmptyBorder((int)(18 * currentScale), (int)(30 * currentScale), (int)(12 * currentScale), (int)(30 * currentScale)));
+                }
+                if (rightPanel != null) {
+                    FlowLayout fl = (FlowLayout) rightPanel.getLayout();
+                    fl.setHgap((int)(16 * currentScale));
+                }
+
+                // Escalar individualmente cada tarjeta
+                for (MenuCardPanel card : cardsList) {
+                    card.scaleCard(currentScale);
+                }
+
+                revalidate();
+                repaint();
+            }
+        });
     }
 
     // ─── HEADER ───────────────────────────────────────────────────────────────
@@ -89,7 +184,7 @@ public class MainMenu extends JFrame {
         header.setBorder(new EmptyBorder(18, 30, 12, 30));
 
         // Sección derecha: Saldo + Notificaciones + Avatar
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
+        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
         rightPanel.setOpaque(false);
 
         // Badge de saldo UP
@@ -98,7 +193,7 @@ public class MainMenu extends JFrame {
         JPanel saldoBadge = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(140, 38);
+                return new Dimension((int)(140 * currentScale), (int)(38 * currentScale));
             }
 
             @Override
@@ -106,23 +201,23 @@ public class MainMenu extends JFrame {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(25, 30, 22));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int)(20 * currentScale), (int)(20 * currentScale));
                 g2.setColor(new Color(50, 65, 45));
-                g2.setStroke(new BasicStroke(1.2f));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+                g2.setStroke(new BasicStroke(1.2f * currentScale));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int)(20 * currentScale), (int)(20 * currentScale));
 
                 // Círculo UP pequeño
                 g2.setColor(new Color(200, 170, 50));
-                g2.fillOval(8, 7, 24, 24);
+                g2.fillOval((int)(8 * currentScale), (int)(7 * currentScale), (int)(24 * currentScale), (int)(24 * currentScale));
                 g2.setColor(new Color(30, 25, 10));
-                g2.setFont(new Font("SansSerif", Font.BOLD, 10));
-                g2.drawString("UP", 13, 23);
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(10 * currentScale)));
+                g2.drawString("UP", (int)(13 * currentScale), (int)(23 * currentScale));
 
                 // Texto saldo
                 g2.setColor(TEXT_PRIMARY);
-                g2.setFont(FONT_BADGE);
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(14 * currentScale)));
                 String saldoText = String.format("%,.0f UP", saldo);
-                g2.drawString(saldoText, 40, 24);
+                g2.drawString(saldoText, (int)(40 * currentScale), (int)(24 * currentScale));
                 g2.dispose();
             }
         };
@@ -132,7 +227,7 @@ public class MainMenu extends JFrame {
         JPanel bellPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(38, 38);
+                return new Dimension((int)(38 * currentScale), (int)(38 * currentScale));
             }
 
             @Override
@@ -142,21 +237,21 @@ public class MainMenu extends JFrame {
 
                 // Icono campana (simplificada)
                 g2.setColor(TEXT_SECONDARY);
-                g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2.setStroke(new BasicStroke(2f * currentScale, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 // Cuerpo campana
-                g2.drawArc(8, 6, 22, 22, 0, 180);
-                g2.drawLine(8, 17, 8, 26);
-                g2.drawLine(30, 17, 30, 26);
-                g2.drawLine(8, 26, 30, 26);
+                g2.drawArc((int)(8 * currentScale), (int)(6 * currentScale), (int)(22 * currentScale), (int)(22 * currentScale), 0, 180);
+                g2.drawLine((int)(8 * currentScale), (int)(17 * currentScale), (int)(8 * currentScale), (int)(26 * currentScale));
+                g2.drawLine((int)(30 * currentScale), (int)(17 * currentScale), (int)(30 * currentScale), (int)(26 * currentScale));
+                g2.drawLine((int)(8 * currentScale), (int)(26 * currentScale), (int)(30 * currentScale), (int)(26 * currentScale));
                 // Badana
-                g2.drawLine(16, 29, 22, 29);
+                g2.drawLine((int)(16 * currentScale), (int)(29 * currentScale), (int)(22 * currentScale), (int)(29 * currentScale));
 
                 // Badge rojo con número
                 g2.setColor(new Color(230, 50, 50));
-                g2.fillOval(23, 2, 16, 16);
+                g2.fillOval((int)(23 * currentScale), (int)(2 * currentScale), (int)(16 * currentScale), (int)(16 * currentScale));
                 g2.setColor(Color.WHITE);
-                g2.setFont(new Font("SansSerif", Font.BOLD, 10));
-                g2.drawString("3", 28, 14);
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(10 * currentScale)));
+                g2.drawString("3", (int)(28 * currentScale), (int)(14 * currentScale));
                 g2.dispose();
             }
         };
@@ -167,7 +262,7 @@ public class MainMenu extends JFrame {
         JPanel avatarPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(42, 42);
+                return new Dimension((int)(42 * currentScale), (int)(42 * currentScale));
             }
 
             @Override
@@ -181,21 +276,25 @@ public class MainMenu extends JFrame {
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
                     ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                    int avatarSize = (int)(38 * currentScale);
+                    int offset = (int)(2 * currentScale);
+                    Image img = icon.getImage().getScaledInstance(avatarSize, avatarSize, Image.SCALE_SMOOTH);
 
                     // Clip circular
-                    Shape clip = new Ellipse2D.Float(2, 2, 38, 38);
+                    Shape clip = new Ellipse2D.Float(offset, offset, avatarSize, avatarSize);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(img, offset, offset, avatarSize, avatarSize, null);
                     g2.setClip(null);
 
                     // Borde
                     g2.setColor(new Color(60, 70, 55));
-                    g2.setStroke(new BasicStroke(1.5f));
-                    g2.drawOval(2, 2, 37, 37);
+                    g2.setStroke(new BasicStroke(1.5f * currentScale));
+                    g2.drawOval(offset, offset, avatarSize - 1, avatarSize - 1);
                 } catch (Exception e) {
+                    int avatarSize = (int)(38 * currentScale);
+                    int offset = (int)(2 * currentScale);
                     g2.setColor(new Color(40, 50, 38));
-                    g2.fillOval(2, 2, 38, 38);
+                    g2.fillOval(offset, offset, avatarSize, avatarSize);
                 }
                 g2.dispose();
             }
@@ -264,209 +363,229 @@ public class MainMenu extends JFrame {
         return header;
     }
 
-    // ─── CONTENIDO PRINCIPAL ──────────────────────────────────────────────────
-    private JPanel buildContent() {
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setOpaque(false);
-        content.setBorder(new EmptyBorder(10, 60, 40, 60));
-
-        // Bienvenida
-        JPanel welcomePanel = new JPanel();
+    // ─── BIENVENIDA ───────────────────────────────────────────────────────────
+    private JPanel buildWelcomePanel() {
+        welcomePanel = new JPanel();
         welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
         welcomePanel.setOpaque(false);
-        welcomePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        welcomePanel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        welcomePanel.setBorder(new EmptyBorder(10, 60, 0, 60));
 
-        JLabel welcomeLabel = new JLabel("¡Bienvenido, " + userName + "! \uD83D\uDC4B");
-        welcomeLabel.setFont(FONT_WELCOME);
+        welcomeLabel = new JLabel("¡Bienvenido, " + userName + "! 👋");
+        welcomeLabel.setFont(FONT_WELCOME_BASE);
         welcomeLabel.setForeground(TEXT_PRIMARY);
         welcomeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel subtitleLabel = new JLabel("Elige una opción para comenzar");
-        subtitleLabel.setFont(FONT_SUBTITLE);
+        subtitleLabel = new JLabel("Elige una opción para comenzar");
+        subtitleLabel.setFont(FONT_SUBTITLE_BASE);
         subtitleLabel.setForeground(TEXT_SECONDARY);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         subtitleLabel.setBorder(new EmptyBorder(6, 0, 0, 0));
 
         welcomePanel.add(welcomeLabel);
         welcomePanel.add(subtitleLabel);
+        return welcomePanel;
+    }
 
-        content.add(welcomePanel);
-
-        // Espacio para mantener las tarjetas en su posición original
-        content.add(Box.createVerticalStrut(75));
+    // ─── CONTENIDO DE TARJETAS ────────────────────────────────────────────────
+    private JPanel buildContent() {
+        JPanel mainContent = new JPanel();
+        mainContent.setLayout(new BoxLayout(mainContent, BoxLayout.Y_AXIS));
+        mainContent.setOpaque(false);
+        mainContent.setBorder(new EmptyBorder(0, 60, 40, 60));
 
         // Grilla de tarjetas
-        JPanel gridPanel = new JPanel(new GridLayout(2, 4, 22, 22));
+        gridLayout = new GridLayout(2, 4, 22, 22);
+        gridPanel = new JPanel(gridLayout);
         gridPanel.setOpaque(false);
         gridPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         gridPanel.setMaximumSize(new Dimension(1180, 460));
+        gridPanel.setPreferredSize(new Dimension(1180, 460));
 
         // Fila 1
-        gridPanel.add(buildMenuCard("Chat", "chat", () -> {
+        gridPanel.add(addCardToList(new MenuCardPanel("Chat", "chat", () -> {
             new Chat();
             dispose();
-        }));
-        gridPanel.add(buildMenuCard("Minijuegos", "gamepad", () -> {
+        })));
+        gridPanel.add(addCardToList(new MenuCardPanel("Minijuegos", "gamepad", () -> {
             VentanaJuegos.crearVentanaLimpia();
             dispose();
-        }));
-        gridPanel.add(buildMenuCard("Ranking", "trophy", null));
-        gridPanel.add(buildMenuCard("Historial", "clock", null));
+        })));
+        gridPanel.add(addCardToList(new MenuCardPanel("Ranking", "trophy", null)));
+        gridPanel.add(addCardToList(new MenuCardPanel("Historial", "clock", () -> {
+            new History();
+            dispose();
+        })));
 
         // Fila 2
-        gridPanel.add(buildMenuCard("Logros", "medal", () -> {
+        gridPanel.add(addCardToList(new MenuCardPanel("Logros", "medal", () -> {
             Logros.mostrarVentanaLogros();
             dispose();
-        }));
-        gridPanel.add(buildMenuCard("Lugares", "coins", () -> {
+        })));
+        gridPanel.add(addCardToList(new MenuCardPanel("Lugares", "coins", () -> {
             new Places();
             dispose();
-        }));
-        gridPanel.add(buildMenuCard("Calculadora de notas", "bell", null));
-        gridPanel.add(buildMenuCard("Perfil", "profile", null));
+        })));
+        gridPanel.add(addCardToList(new MenuCardPanel("Calculadora de notas", "bell", null)));
+        gridPanel.add(addCardToList(new MenuCardPanel("Perfil", "profile", null)));
 
-        content.add(gridPanel);
+        mainContent.add(gridPanel);
 
-        return content;
+        return mainContent;
     }
 
-    // ─── TARJETA DE MENÚ ──────────────────────────────────────────────────────
-    private JPanel buildMenuCard(String title, String iconType, Runnable action) {
-        boolean[] hovered = { false };
-
-        JPanel card = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Fondo de la tarjeta
-                g2.setColor(BG_CARD);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-
-                // Borde
-                if (hovered[0]) {
-                    g2.setColor(BORDER_HOVER);
-                    g2.setStroke(new BasicStroke(1.8f));
-                } else {
-                    g2.setColor(BORDER_CARD);
-                    g2.setStroke(new BasicStroke(1.2f));
-                }
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-
-                // Brillo inferior verde sutil cuando hover
-                if (hovered[0]) {
-                    GradientPaint glowBottom = new GradientPaint(
-                            0, getHeight() - 30, new Color(30, 120, 30, 40),
-                            0, getHeight(), new Color(30, 120, 30, 0));
-                    g2.setPaint(glowBottom);
-                    g2.fillRoundRect(0, getHeight() - 30, getWidth(), 30, 20, 20);
-                }
-
-                g2.dispose();
-            }
-        };
-        card.setOpaque(false);
-        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        card.setBorder(new EmptyBorder(30, 20, 20, 20));
-
-        card.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                hovered[0] = true;
-                card.repaint();
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                hovered[0] = false;
-                card.repaint();
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (action != null) {
-                    action.run();
-                } else {
-                    JOptionPane.showMessageDialog(MainMenu.this,
-                            "Próximamente: " + title,
-                            "En desarrollo", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
-
-        // Icono central
-        // Icono central (imagen PNG)
-        String fileName = "";
-        switch (iconType) {
-            case "chat":
-                fileName = "Icons/ChatAccess.png";
-                break;
-            case "gamepad":
-                fileName = "Icons/MinigamesAccess.png";
-                break;
-            case "trophy":
-                fileName = "Icons/RankingAccess.png";
-                break;
-            case "clock":
-                fileName = "Icons/HistoryAccess.png";
-                break;
-            case "medal":
-                fileName = "Icons/AchievementAccess.png";
-                break;
-            case "coins":
-                fileName = "Icons/PlaceAccess.png";
-                break;
-            case "bell":
-                fileName = "Icons/CalculatorAccess.png";
-                break;
-            case "profile":
-                fileName = "Icons/ProfileAccess.png";
-                break;
-            default:
-                fileName = "Icons/UserDefaultpfp.png";
-                break;
-        }
-
-        JLabel iconLabel;
-        try {
-            ImageIcon icon = new ImageIcon(fileName);
-            Image scaledImage = icon.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
-            iconLabel = new JLabel(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            iconLabel = new JLabel();
-        }
-        iconLabel.setPreferredSize(new Dimension(80, 80));
-
-        JPanel iconWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        iconWrapper.setOpaque(false);
-        iconWrapper.add(iconLabel);
-
-        // Nombre de la tarjeta
-        JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
-        titleLabel.setFont(FONT_CARD_TITLE);
-        titleLabel.setForeground(TEXT_PRIMARY);
-        titleLabel.setBorder(new EmptyBorder(8, 0, 4, 0));
-
-        // Flecha de redirección
-        JLabel arrowLabel = new JLabel("→", SwingConstants.CENTER);
-        arrowLabel.setFont(FONT_ARROW);
-        arrowLabel.setForeground(GREEN_MAIN);
-
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-        bottomPanel.setOpaque(false);
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        arrowLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        bottomPanel.add(titleLabel);
-        bottomPanel.add(arrowLabel);
-
-        card.add(iconWrapper, BorderLayout.CENTER);
-        card.add(bottomPanel, BorderLayout.SOUTH);
-
+    private MenuCardPanel addCardToList(MenuCardPanel card) {
+        cardsList.add(card);
         return card;
+    }
+
+    // ─── CLASE INTERNA PARA TARJETAS DINÁMICAS ──────────────────────────────
+    private class MenuCardPanel extends JPanel {
+        private String title;
+        private String iconType;
+        private JLabel iconLabel;
+        private JLabel titleLabel;
+        private JLabel arrowLabel;
+        private JPanel iconWrapper;
+        private JPanel bottomPanel;
+        private boolean hovered = false;
+
+        public MenuCardPanel(String title, String iconType, Runnable action) {
+            this.title = title;
+            this.iconType = iconType;
+
+            setLayout(new BorderLayout());
+            setOpaque(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    hovered = true;
+                    repaint();
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    hovered = false;
+                    repaint();
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (action != null) {
+                        action.run();
+                    } else {
+                        JOptionPane.showMessageDialog(MainMenu.this,
+                                "Próximamente: " + title,
+                                "En desarrollo", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            });
+
+            // Icono central (imagen PNG)
+            String fileName = getIconPath(iconType);
+            iconLabel = new JLabel();
+            try {
+                ImageIcon icon = new ImageIcon(fileName);
+                Image scaledImage = icon.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+                iconLabel.setIcon(new ImageIcon(scaledImage));
+            } catch (Exception e) {
+                // fallback
+            }
+            iconLabel.setPreferredSize(new Dimension(80, 80));
+
+            iconWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            iconWrapper.setOpaque(false);
+            iconWrapper.add(iconLabel);
+
+            // Nombre de la tarjeta
+            titleLabel = new JLabel(title, SwingConstants.CENTER);
+            titleLabel.setFont(FONT_CARD_TITLE_BASE);
+            titleLabel.setForeground(TEXT_PRIMARY);
+
+            // Flecha de redirección
+            arrowLabel = new JLabel("→", SwingConstants.CENTER);
+            arrowLabel.setFont(FONT_ARROW_BASE);
+            arrowLabel.setForeground(GREEN_MAIN);
+
+            bottomPanel = new JPanel();
+            bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+            bottomPanel.setOpaque(false);
+            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            arrowLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            bottomPanel.add(titleLabel);
+            bottomPanel.add(arrowLabel);
+
+            add(iconWrapper, BorderLayout.CENTER);
+            add(bottomPanel, BorderLayout.SOUTH);
+
+            scaleCard(currentScale);
+        }
+
+        private String getIconPath(String type) {
+            switch (type) {
+                case "chat": return "Icons/ChatAccess.png";
+                case "gamepad": return "Icons/MinigamesAccess.png";
+                case "trophy": return "Icons/RankingAccess.png";
+                case "clock": return "Icons/HistoryAccess.png";
+                case "medal": return "Icons/AchievementAccess.png";
+                case "coins": return "Icons/PlaceAccess.png";
+                case "bell": return "Icons/CalculatorAccess.png";
+                case "profile": return "Icons/ProfileAccess.png";
+                default: return "Icons/UserDefaultpfp.png";
+            }
+        }
+
+        public void scaleCard(float scale) {
+            setBorder(new EmptyBorder((int)(30 * scale), (int)(20 * scale), (int)(20 * scale), (int)(20 * scale)));
+            titleLabel.setFont(new Font("SansSerif", Font.BOLD, (int)(15 * scale)));
+            arrowLabel.setFont(new Font("SansSerif", Font.PLAIN, (int)(16 * scale)));
+            titleLabel.setBorder(new EmptyBorder((int)(8 * scale), 0, (int)(4 * scale), 0));
+
+            int iconSize = (int)(75 * scale);
+            if (iconSize < 30) iconSize = 30;
+
+            try {
+                String fileName = getIconPath(iconType);
+                ImageIcon icon = new ImageIcon(fileName);
+                Image scaledImage = icon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+                iconLabel.setIcon(new ImageIcon(scaledImage));
+            } catch (Exception e) {
+                // ignore
+            }
+            iconLabel.setPreferredSize(new Dimension(iconSize + 5, iconSize + 5));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Fondo de la tarjeta
+            g2.setColor(BG_CARD);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int)(20 * currentScale), (int)(20 * currentScale));
+
+            // Borde
+            if (hovered) {
+                g2.setColor(BORDER_HOVER);
+                g2.setStroke(new BasicStroke(1.8f * currentScale));
+            } else {
+                g2.setColor(BORDER_CARD);
+                g2.setStroke(new BasicStroke(1.2f * currentScale));
+            }
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int)(20 * currentScale), (int)(20 * currentScale));
+
+            // Brillo inferior verde sutil cuando hover
+            if (hovered) {
+                GradientPaint glowBottom = new GradientPaint(
+                        0, getHeight() - (int)(30 * currentScale), new Color(30, 120, 30, 40),
+                        0, getHeight(), new Color(30, 120, 30, 0));
+                g2.setPaint(glowBottom);
+                g2.fillRoundRect(0, getHeight() - (int)(30 * currentScale), getWidth(), (int)(30 * currentScale), (int)(20 * currentScale), (int)(20 * currentScale));
+            }
+
+            g2.dispose();
+        }
     }
 
     // ─── MAIN ────────────────────────────────────────────────────────────────

@@ -68,6 +68,18 @@ public class Chat extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+        // Preservar estado de pantalla completa
+        boolean maximizado = false;
+        for (java.awt.Frame f : java.awt.Frame.getFrames()) {
+            if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
+                maximizado = true;
+                break;
+            }
+        }
+        if (maximizado) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+
         // dejar de seleccionar contacto al dar click fuera
         Toolkit.getDefaultToolkit().addAWTEventListener(evt -> {
             if (evt instanceof MouseEvent) {

@@ -63,6 +63,18 @@ public class Places extends JFrame {
         setBackground(BG_DARK);
         setLocationRelativeTo(null);
 
+        // Preservar estado de pantalla completa
+        boolean maximizado = false;
+        for (java.awt.Frame f : java.awt.Frame.getFrames()) {
+            if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
+                maximizado = true;
+                break;
+            }
+        }
+        if (maximizado) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(BG_DARK);
 
