@@ -5,7 +5,11 @@ import java.util.Random;
 
 public class JuegoCarrera extends JFrame {
 
+    // logros
+    private boolean Logro = false;
+    private int JuegosGanadosSeguidos = 0;
 
+    //jugador
     private int monedasJugador = 1200;
     private String nombreJugador = "juan cacorro";
     private ImageIcon iconoJugador = null;
@@ -34,11 +38,11 @@ public class JuegoCarrera extends JFrame {
 
     public JuegoCarrera() {
         // Cargar datos reales del usuario logueado para consistencia global
-        if (VentanaLogros.getUsuarioActual() != null) {
-            this.monedasJugador = (int) VentanaLogros.getUsuarioActual().getSaldo();
-            this.nombreJugador = VentanaLogros.getUsuarioActual().getNombre();
+        if (Usuario.getUsuarioActual() != null) {
+            this.monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
+            this.nombreJugador = Usuario.getUsuarioActual().getNombre();
         } else {
-            this.monedasJugador = 500;
+            //this.monedasJugador = 500;
             this.nombreJugador = "Invitado";
         }
 
@@ -400,8 +404,8 @@ public class JuegoCarrera extends JFrame {
         // Descontar monedas de la apuesta inicial
         monedasJugador -= montoApuesta;
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (VentanaLogros.getUsuarioActual() != null) {
-            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
         }
 
         // Reiniciar pistas
@@ -455,6 +459,13 @@ public class JuegoCarrera extends JFrame {
     private void evaluarResultado(int caballoGanador) {
         if (caballoSeleccionado == caballoGanador) {
             int premio = montoApuesta * 2;
+            if(JuegosGanadosSeguidos > 3){
+                JuegosGanadosSeguidos = JuegosGanadosSeguidos + 1;
+                System.out.println("JuegosGanadosSeguidos");
+
+            }
+            System.out.println("El numero de Victorias es: " + JuegosGanadosSeguidos);
+
             monedasJugador += premio;
             JOptionPane.showMessageDialog(this,
                     "🎉 ¡Ganaste! El Caballo " + caballoGanador + " llegó primero.\nRecibes: " + premio + " UP.",
@@ -465,12 +476,14 @@ public class JuegoCarrera extends JFrame {
                     "💸 Perdiste. El ganador fue el Caballo " + caballoGanador + ".\nMás suerte para la próxima.",
                     "Fin de la carrera",
                     JOptionPane.WARNING_MESSAGE);
+            JuegosGanadosSeguidos = 0;
+            System.out.println("El numero de Victorias es: " + JuegosGanadosSeguidos);
         }
 
         // Actualizar UI post-juego
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (VentanaLogros.getUsuarioActual() != null) {
-            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
         }
         carreraEnCurso = false;
         setControlesHabilitados(true); // Desbloquea controles

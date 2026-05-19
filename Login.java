@@ -157,7 +157,7 @@ public class Login extends JFrame {
                                 return;
                         }
 
-                        if (VentanaLogros.iniciarSesion(identifier, pass)) {
+                        if (Usuario.iniciarSesion(identifier, pass)) {
                                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                                 // Abre el menú principal
                                 new MainMenu();

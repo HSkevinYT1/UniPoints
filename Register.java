@@ -160,8 +160,8 @@ public class Register extends JFrame {
                 return;
             }
 
-            VentanaLogros nuevoUsuario = new VentanaLogros(name, email, username, pass);
-            if (VentanaLogros.registrarUsuario(nuevoUsuario)) {
+            Usuario nuevoUsuario = new Usuario(name, email, username, pass);
+            if (Usuario.registrarUsuario(nuevoUsuario)) {
                 JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente. ¡Bienvenido!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 new Login();
                 dispose();
