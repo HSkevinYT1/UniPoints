@@ -191,13 +191,13 @@ public class Logros {
                 btnReclamar.setEnabled(false);
                 lblRegalo.setForeground(COLOR_TEXTO_MUTED);
             } else if (logro.isCompletado()) {
-                btnReclamar.setText("Reclamar");
+                btnReclamar.setText("Completado");
                 btnReclamar.setBackground(COLOR_VERDE_ACENTO);
                 btnReclamar.setForeground(COLOR_FONDO_PRINCIPAL);
                 btnReclamar.setEnabled(true);
                 lblRegalo.setForeground(COLOR_VERDE_ACENTO);
             } else {
-                btnReclamar.setText("Reclamar");
+                btnReclamar.setText("Por completar");
                 btnReclamar.setBackground(COLOR_FONDO_PANEL);
                 btnReclamar.setForeground(COLOR_TEXTO_MUTED);
                 btnReclamar.setEnabled(false);

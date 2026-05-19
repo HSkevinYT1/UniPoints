@@ -9,7 +9,7 @@ public class GestorLogros {
     private GestorLogros() {
         listaLogros = new ArrayList<>();
         // Inicializamos los logros aquí una sola vez al arrancar el juego
-        listaLogros.add(new Logros.Logro("si", 150));
+        listaLogros.add(new Logros.Logro("si", 200));
         listaLogros.add(new Logros.Logro("no", 300));
         listaLogros.add(new Logros.Logro("haz que juancacorro haga algo (este logro es imposible)", 100));
         listaLogros.add(new Logros.Logro("tal vez", 500));

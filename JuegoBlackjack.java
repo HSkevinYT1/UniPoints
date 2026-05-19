@@ -45,9 +45,9 @@ public class JuegoBlackjack extends JFrame {
 
     // Configura la ventana principal del Blackjack.
     public JuegoBlackjack() {
-        if (VentanaLogros.getUsuarioActual() != null) {
-            monedasJugador = (int) VentanaLogros.getUsuarioActual().getSaldo();
-            nombreJugador = VentanaLogros.getUsuarioActual().getNombre();
+        if (Usuario.getUsuarioActual() != null) {
+            monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
+            nombreJugador = Usuario.getUsuarioActual().getNombre();
         }
 
         setTitle("Unab Points - Blackjack");
@@ -488,8 +488,8 @@ public class JuegoBlackjack extends JFrame {
     // Guarda el saldo en el usuario actual para mantenerlo entre ventanas.
     private void guardarSaldo() {
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (VentanaLogros.getUsuarioActual() != null) {
-            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
         }
     }
 

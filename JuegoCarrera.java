@@ -459,7 +459,7 @@ public class JuegoCarrera extends JFrame {
     private void evaluarResultado(int caballoGanador) {
         if (caballoSeleccionado == caballoGanador) {
             int premio = montoApuesta * 2;
-            if(JuegosGanadosSeguidos > 3){
+            if(JuegosGanadosSeguidos < 3){
                 JuegosGanadosSeguidos = JuegosGanadosSeguidos + 1;
                 System.out.println("JuegosGanadosSeguidos");
 
