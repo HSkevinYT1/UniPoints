@@ -44,6 +44,15 @@ public class JuegoBingo extends JFrame {
     private final Color COLOR_AZUL_BOTON = new Color(0, 150, 255);
 
     public JuegoBingo() {
+        // Cargar datos reales del usuario logueado para consistencia global
+        if (Usuario.getUsuarioActual() != null) {
+            this.monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
+            this.nombreJugador = Usuario.getUsuarioActual().getNombre();
+        } else {
+            this.monedasJugador = 500;
+            this.nombreJugador = "Invitado";
+        }
+
         setTitle("Unab Points - Casino Bingo");
         setSize(1000, 580);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,8 +85,9 @@ public class JuegoBingo extends JFrame {
         btnVolver.setBackground(COLOR_FONDO_PANEL);
         btnVolver.setForeground(COLOR_TEXTO);
         btnVolver.setFocusPainted(false);
+        btnVolver.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
         btnVolver.addActionListener(e -> {
-            // VentanaJuegos.crearVentanaLimpia();
+            VentanaJuegos.crearVentanaLimpia();
             JuegoBingo.this.dispose();
         });
 
@@ -90,13 +100,13 @@ public class JuegoBingo extends JFrame {
         panelIzquierdoHeader.add(btnVolver);
         panelIzquierdoHeader.add(lblTitulo);
 
-        lblMonedas = new JLabel(monedasJugador + " 🪙", SwingConstants.CENTER);
+        lblMonedas = new JLabel(String.format("%,d UP", monedasJugador), SwingConstants.CENTER);
         lblMonedas.setOpaque(true);
         lblMonedas.setBackground(COLOR_FONDO_PANEL);
         lblMonedas.setForeground(COLOR_VERDE_ACENTO);
         lblMonedas.setFont(new Font("Arial", Font.BOLD, 14));
         lblMonedas.setBorder(BorderFactory.createLineBorder(COLOR_VERDE_ACENTO, 1, true));
-        lblMonedas.setPreferredSize(new Dimension(110, 35));
+        lblMonedas.setPreferredSize(new Dimension(120, 35));
 
         header.add(panelIzquierdoHeader, BorderLayout.WEST);
         header.add(lblMonedas, BorderLayout.EAST);
@@ -131,15 +141,20 @@ public class JuegoBingo extends JFrame {
         txtMontoApuesta.setCaretColor(COLOR_TEXTO);
         txtMontoApuesta.setHorizontalAlignment(JTextField.CENTER);
         txtMontoApuesta.setEditable(false);
+        txtMontoApuesta.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
 
         btnMenos = new JButton("-");
         btnMenos.setBackground(COLOR_FONDO_PRINCIPAL);
         btnMenos.setForeground(COLOR_TEXTO);
+        btnMenos.setFocusPainted(false);
+        btnMenos.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
         btnMenos.addActionListener(e -> modificarApuesta(-50));
 
         btnMas = new JButton("+");
         btnMas.setBackground(COLOR_FONDO_PRINCIPAL);
         btnMas.setForeground(COLOR_TEXTO);
+        btnMas.setFocusPainted(false);
+        btnMas.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
         btnMas.addActionListener(e -> modificarApuesta(50));
 
         panelMontoCtrl.add(btnMenos, BorderLayout.WEST);
@@ -158,6 +173,8 @@ public class JuegoBingo extends JFrame {
             btnRapidos[i].setFont(new Font("Arial", Font.PLAIN, 10));
             btnRapidos[i].setBackground(COLOR_FONDO_PRINCIPAL);
             btnRapidos[i].setForeground(COLOR_TEXTO_MUTED);
+            btnRapidos[i].setFocusPainted(false);
+            btnRapidos[i].setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
             btnRapidos[i].setMargin(new Insets(2, 2, 2, 2));
             btnRapidos[i].addActionListener(e -> {
                 montoApuesta = m;
@@ -171,13 +188,14 @@ public class JuegoBingo extends JFrame {
         lblExtras.setForeground(COLOR_TEXTO_MUTED);
         lblExtras.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        btnBalotasExtra = new JButton("+5 Balotas Extra (50 🪙)");
+        btnBalotasExtra = new JButton("+5 Balotas Extra (50 UP)");
         btnBalotasExtra.setBackground(COLOR_AZUL_BOTON);
         btnBalotasExtra.setForeground(COLOR_TEXTO);
         btnBalotasExtra.setFont(new Font("Arial", Font.BOLD, 12));
         btnBalotasExtra.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnBalotasExtra.setMaximumSize(new Dimension(210, 35));
         btnBalotasExtra.setFocusPainted(false);
+        btnBalotasExtra.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
         btnBalotasExtra.addActionListener(e -> comprarBalotasExtra());
 
         JPanel panelGanancia = new JPanel(new GridLayout(2, 1));
@@ -188,7 +206,7 @@ public class JuegoBingo extends JFrame {
 
         JLabel lblGananciaTitulo = new JLabel("Premio Bingo x3", SwingConstants.CENTER);
         lblGananciaTitulo.setForeground(COLOR_TEXTO_MUTED);
-        lblGananciaPotencial = new JLabel(montoApuesta * 3 + " 🪙", SwingConstants.CENTER);
+        lblGananciaPotencial = new JLabel(String.format("%,d UP", montoApuesta * 3), SwingConstants.CENTER);
         lblGananciaPotencial.setForeground(COLOR_VERDE_ACENTO);
         lblGananciaPotencial.setFont(new Font("Arial", Font.BOLD, 14));
         panelGanancia.add(lblGananciaTitulo);
@@ -201,6 +219,7 @@ public class JuegoBingo extends JFrame {
         btnApostar.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnApostar.setMaximumSize(new Dimension(210, 40));
         btnApostar.setFocusPainted(false);
+        btnApostar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         btnApostar.addActionListener(e -> iniciarBingo());
 
         panel.add(lblApuesta); panel.add(Box.createVerticalStrut(5));
@@ -276,7 +295,7 @@ public class JuegoBingo extends JFrame {
         // REGLAS ACTUALIZADAS (MÍNIMO 60 BALOTAS Y SIN TOPE MÁXIMO)
         String reglasHTML = "<html><body style='width: 150px; color: #8A8F99; font-family: Arial; font-size: 11px;'>"
                 + "<br><b style='color: #FFFFFF;'>1.</b> Selecciona el valor de tu cartón.<br><br>"
-                + "<b style='color: #0096FF;'>¿Quieres más ventaja?</b> Presiona '+5 Balotas Extra' por <b style='color: #FFFFFF;'>50 🪙</b> todas las veces que quieras para sumar más tiros a la tómbola en esa ronda.<br><br>"
+                + "<b style='color: #0096FF;'>¿Quieres más ventaja?</b> Presiona '+5 Balotas Extra' por <b style='color: #FFFFFF;'>50 UP</b> todas las veces que quieras para sumar más tiros a la tómbola en esa ronda.<br><br>"
                 + "<b style='color: #FFFFFF;'>2.</b> Presiona 'Jugar Bingo'. La tómbola sacará las balotas configuradas (Mínimo <b style='color: #FFFFFF;'>60</b>).<br><br>"
                 + "<b style='color: #FFFFFF;'>3.</b> Si completas los 9 números de tu cartón antes de terminar, ¡haces BINGO y <b>triplicas (x3)</b> tu apuesta!<br><br>"
                 + "<b style='color: #00E62A;'>¡Mucha suerte!</b>"
@@ -301,7 +320,7 @@ public class JuegoBingo extends JFrame {
     }
 
     private void actualizarGananciaPotencial() {
-        lblGananciaPotencial.setText((montoApuesta * 3) + " 🪙");
+        lblGananciaPotencial.setText(String.format("%,d UP", montoApuesta * 3));
     }
 
     private void comprarBalotasExtra() {
@@ -309,7 +328,7 @@ public class JuegoBingo extends JFrame {
 
         if (monedasJugador < 50) {
             JOptionPane.showMessageDialog(this,
-                    "❌ No tienes suficientes monedas para añadir más balotas (Costo: 50 🪙).",
+                    "❌ No tienes suficientes UP para añadir más balotas (Costo: 50 UP).",
                     "Saldo Insuficiente",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -319,7 +338,10 @@ public class JuegoBingo extends JFrame {
         monedasJugador -= 50;
         balotasRondaActual += 5;
 
-        lblMonedas.setText(monedasJugador + " 🪙");
+        lblMonedas.setText(String.format("%,d UP", monedasJugador));
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        }
         lblBalotasContador.setText("Balotas en juego: " + balotasRondaActual);
     }
 
@@ -375,7 +397,7 @@ public class JuegoBingo extends JFrame {
     private void iniciarBingo() {
         if (montoApuesta > monedasJugador) {
             JOptionPane.showMessageDialog(this,
-                    "❌ No tienes suficientes monedas para comprar este cartón.",
+                    "❌ No tienes suficientes UP para comprar este cartón.",
                     "Saldo Insuficiente",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -387,7 +409,10 @@ public class JuegoBingo extends JFrame {
         setControlesHabilitados(false);
 
         monedasJugador -= montoApuesta;
-        lblMonedas.setText(monedasJugador + " 🪙");
+        lblMonedas.setText(String.format("%,d UP", monedasJugador));
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        }
 
         generarNuevoCarton();
         actualizarCartonVisual();
@@ -445,7 +470,7 @@ public class JuegoBingo extends JFrame {
             int premio = montoApuesta * 3;
             monedasJugador += premio;
             JOptionPane.showMessageDialog(this,
-                    "🎉 ¡¡BINGO!! 🎉\nLograste tachar todo tu cartón.\nRecibes: " + premio + " monedas.",
+                    "🎉 ¡¡BINGO!! 🎉\nLograste tachar todo tu cartón.\nRecibes: " + premio + " UP.",
                     "¡Victoria!",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -459,7 +484,10 @@ public class JuegoBingo extends JFrame {
         balotasRondaActual = BALOTAS_BASE;
         lblBalotasContador.setText("Balotas en juego: " + balotasRondaActual);
 
-        lblMonedas.setText(monedasJugador + " 🪙");
+        lblMonedas.setText(String.format("%,d UP", monedasJugador));
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        }
         lblBalotaActual.setText("--");
         juegoEnCurso = false;
         setControlesHabilitados(true);

@@ -205,9 +205,18 @@ public class MainMenu extends JFrame {
         avatarPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JPopupMenu popup = new JPopupMenu();
+                JPopupMenu popup = new JPopupMenu() {
+                    @Override
+                    protected void paintBorder(Graphics g) {
+                        Graphics2D g2 = (Graphics2D) g.create();
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setColor(new Color(50, 65, 45));
+                        g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                        g2.dispose();
+                    }
+                };
                 popup.setBackground(new Color(15, 20, 15));
-                popup.setBorder(BorderFactory.createLineBorder(new Color(50, 65, 45), 1));
+                popup.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
                 JMenuItem logoutItem = new JMenuItem("Cerrar sesión");
                 logoutItem.setOpaque(true);
@@ -307,8 +316,14 @@ public class MainMenu extends JFrame {
         gridPanel.add(buildMenuCard("Historial", "clock", null));
 
         // Fila 2
-        gridPanel.add(buildMenuCard("Logros", "medal", null));
-        gridPanel.add(buildMenuCard("Lugares", "coins", null));
+        gridPanel.add(buildMenuCard("Logros", "medal", () -> {
+            Logros.mostrarVentanaLogros();
+            dispose();
+        }));
+        gridPanel.add(buildMenuCard("Lugares", "coins", () -> {
+            new Places();
+            dispose();
+        }));
         gridPanel.add(buildMenuCard("Calculadora de notas", "bell", null));
         gridPanel.add(buildMenuCard("Perfil", "profile", null));
 

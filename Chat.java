@@ -118,8 +118,14 @@ public class Chat extends JFrame {
     private void buildUI() {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(BG_DARK);
-        root.add(buildLeftPanel(), BorderLayout.WEST);
-        root.add(buildRightPanel(), BorderLayout.CENTER);
+        root.add(buildHeader(), BorderLayout.NORTH);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setOpaque(false);
+        contentPanel.add(buildLeftPanel(), BorderLayout.WEST);
+        contentPanel.add(buildRightPanel(), BorderLayout.CENTER);
+        root.add(contentPanel, BorderLayout.CENTER);
+
         setContentPane(root);
     }
 
@@ -148,21 +154,6 @@ public class Chat extends JFrame {
         leftContainer.setLayout(new BoxLayout(leftContainer, BoxLayout.X_AXIS));
         leftContainer.setOpaque(false);
 
-        // Botón volver
-        JPanel backBtn = makeIconBtn(() -> {
-            new MainMenu();
-            dispose();
-        }, g2 -> {
-            g2.setColor(TEXT_PRIMARY);
-            g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            // Dibujar una flecha apuntando a la izquierda "←"
-            g2.drawLine(10, 17, 24, 17);
-            g2.drawLine(10, 17, 16, 11);
-            g2.drawLine(10, 17, 16, 23);
-        });
-
-        leftContainer.add(backBtn);
-        leftContainer.add(Box.createHorizontalStrut(8));
         leftContainer.add(title);
 
         header.add(leftContainer, BorderLayout.WEST);
@@ -229,6 +220,7 @@ public class Chat extends JFrame {
 
         searchField = new JTextField();
         searchField.setOpaque(false);
+        searchField.setBackground(new Color(0, 0, 0, 0)); // Evita el fondo blanco por defecto en Windows L&F
         searchField.setBorder(null);
         searchField.setFont(FONT_INPUT);
         searchField.setText("Buscar usuarios...");
@@ -561,6 +553,7 @@ public class Chat extends JFrame {
 
         inputField = new JTextField();
         inputField.setOpaque(false);
+        inputField.setBackground(new Color(0, 0, 0, 0)); // Evita el fondo blanco por defecto en Windows L&F
         inputField.setBorder(null);
         inputField.setForeground(TEXT_SECONDARY);
         inputField.setCaretColor(GREEN_MAIN);
@@ -770,7 +763,11 @@ public class Chat extends JFrame {
         addMenuItem(menu, "Silenciar notificaciones", TEXT_PRIMARY,
                 () -> showToast("Silenciado: " + selectedContact.name));
 
-        menu.addSeparator();
+        JPanel divider = new JPanel();
+        divider.setBackground(BORDER_CARD);
+        divider.setPreferredSize(new Dimension(0, 1));
+        divider.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        menu.add(divider);
 
         addMenuItem(menu, "Bloquear usuario", RED_DANGER, () -> {
             int r = JOptionPane.showConfirmDialog(this,
@@ -1110,16 +1107,24 @@ public class Chat extends JFrame {
     }
 
     private JPopupMenu darkPopup() {
-        JPopupMenu m = new JPopupMenu();
+        JPopupMenu m = new JPopupMenu() {
+            @Override
+            protected void paintBorder(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(BORDER_CARD);
+                g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                g2.dispose();
+            }
+        };
         m.setBackground(BG_CARD);
-        m.setBorder(new CompoundBorder(
-                new LineBorder(BORDER_CARD, 1),
-                new EmptyBorder(4, 0, 4, 0)));
+        m.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         return m;
     }
 
     private void addMenuItem(JPopupMenu menu, String label, Color fg, Runnable action) {
         JMenuItem item = new JMenuItem(label);
+        item.setOpaque(true); // Fuerza al item a pintar su propio fondo oscuro
         item.setBackground(BG_CARD);
         item.setForeground(fg);
         item.setFont(FONT_PREVIEW);
@@ -1147,6 +1152,7 @@ public class Chat extends JFrame {
             }
         };
         f.setOpaque(false);
+        f.setBackground(new Color(0, 0, 0, 0)); // Evita el fondo blanco por defecto en Windows L&F
         f.setBorder(new CompoundBorder(
                 new LineBorder(BORDER_CARD, 1),
                 new EmptyBorder(8, 12, 8, 12)));
@@ -1291,5 +1297,286 @@ public class Chat extends JFrame {
         } catch (Exception ignored) {
         }
         SwingUtilities.invokeLater(Chat::new);
+    }
+
+    // ════════════════════════════════════════════════════════
+    // HEADER SUPERIOR PREMIUM UNIFICADO
+    // ════════════════════════════════════════════════════════
+    private JPanel buildHeader() {
+        Color BG_HEADER = new Color(1, 3, 7);
+        Color BG_CARD = new Color(6, 12, 15);
+        Color BORDER = new Color(25, 35, 30);
+        Color GREEN = new Color(44, 243, 53);
+        Color GOLD = new Color(245, 166, 35);
+        Font FONT_POINTS = new Font("SansSerif", Font.BOLD, 16);
+        Color TEXT_WHITE = new Color(240, 240, 240);
+
+        JPanel header = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setColor(BG_HEADER);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(BORDER);
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+            }
+        };
+        header.setOpaque(false);
+        header.setBorder(BorderFactory.createEmptyBorder(14, 22, 14, 22));
+
+        // ← Botón atrás
+        JButton backBtn = makeIconButton("←", 32);
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 18));
+        backBtn.addActionListener(e -> {
+            new MainMenu();
+            dispose();
+        });
+
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        left.setOpaque(false);
+        left.add(backBtn);
+
+        // Lado derecho: puntos + campana + avatar
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+        right.setOpaque(false);
+
+        // Chip de puntos
+        JPanel pointsChip = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 25, 30));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                g2.setColor(BORDER);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
+                g2.dispose();
+            }
+        };
+        pointsChip.setOpaque(false);
+        pointsChip.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 14));
+
+        double saldo = 500;
+        Usuario actual = Usuario.getUsuarioActual();
+        if (actual != null) {
+            saldo = actual.getSaldo();
+        }
+
+        JLabel coinIcon = new JLabel(makeCoinIcon(22));
+        JLabel pointsLbl = new JLabel(String.format("%,.0f ", saldo));
+        pointsLbl.setFont(FONT_POINTS);
+        pointsLbl.setForeground(TEXT_WHITE);
+        JLabel upLbl = new JLabel("UP");
+        upLbl.setFont(FONT_POINTS);
+        upLbl.setForeground(GREEN);
+
+        pointsChip.add(coinIcon);
+        pointsChip.add(pointsLbl);
+        pointsChip.add(upLbl);
+
+        // Campana con badge
+        JPanel bellPanel = makeBellWithBadge(3);
+
+        // Avatar del usuario con popup de Cerrar sesión
+        JPanel avatarPanel = new JPanel() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(42, 42);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                try {
+                    String fotoPath = (Usuario.getUsuarioActual() != null)
+                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                            : "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = new ImageIcon(fotoPath);
+                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+
+                    // Clip circular
+                    Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
+                    g2.setClip(clip);
+                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.setClip(null);
+
+                    // Borde verde online premium
+                    g2.setColor(GREEN);
+                    g2.setStroke(new BasicStroke(1.5f));
+                    g2.drawOval(2, 2, 37, 37);
+                } catch (Exception e) {
+                    g2.setColor(new Color(40, 50, 38));
+                    g2.fillOval(2, 2, 38, 38);
+                }
+                g2.dispose();
+            }
+        };
+        avatarPanel.setOpaque(false);
+        avatarPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        avatarPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JPopupMenu popup = new JPopupMenu() {
+                    @Override
+                    protected void paintBorder(Graphics g) {
+                        Graphics2D g2 = (Graphics2D) g.create();
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setColor(new Color(50, 65, 45));
+                        g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                        g2.dispose();
+                    }
+                };
+                popup.setBackground(new Color(15, 20, 15));
+                popup.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+                JMenuItem logoutItem = new JMenuItem("Cerrar sesión");
+                logoutItem.setOpaque(true);
+                logoutItem.setBackground(new Color(15, 20, 15));
+                logoutItem.setForeground(new Color(240, 240, 240));
+                logoutItem.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                logoutItem.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+                logoutItem.setFocusPainted(false);
+                logoutItem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                logoutItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent me) {
+                        logoutItem.setBackground(new Color(30, 45, 30));
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent me) {
+                        logoutItem.setBackground(new Color(15, 20, 15));
+                    }
+                });
+
+                logoutItem.addActionListener(ae -> {
+                    Usuario.cerrarSesion();
+                    new Login();
+                    dispose();
+                });
+
+                popup.add(logoutItem);
+
+                int px = avatarPanel.getWidth() - popup.getPreferredSize().width;
+                int py = avatarPanel.getHeight() + 4;
+                popup.show(avatarPanel, px, py);
+            }
+        });
+
+        right.add(pointsChip);
+        right.add(bellPanel);
+        right.add(avatarPanel);
+
+        header.add(left, BorderLayout.WEST);
+        header.add(right, BorderLayout.EAST);
+        return header;
+    }
+
+    private JButton makeIconButton(String text, int size) {
+        Color BG_CARD = new Color(6, 12, 15);
+        Color BORDER = new Color(25, 35, 30);
+        Color TEXT_WHITE = new Color(240, 240, 240);
+
+        JButton btn = new JButton(text) {
+            boolean hover = false;
+            {
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        hover = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        hover = false;
+                        repaint();
+                    }
+                });
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(hover ? new Color(0x2A2A2A) : BG_CARD);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.setColor(BORDER);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                g2.setColor(TEXT_WHITE);
+                g2.setFont(getFont());
+                FontMetrics fm = g2.getFontMetrics();
+                g2.drawString(getText(), (getWidth() - fm.stringWidth(getText())) / 2,
+                        (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
+                g2.dispose();
+            }
+        };
+        btn.setPreferredSize(new Dimension(size + 14, size + 4));
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return btn;
+    }
+
+    private ImageIcon makeCoinIcon(int size) {
+        Color GOLD = new Color(245, 166, 35);
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(GOLD);
+        g2.fillOval(0, 0, size - 1, size - 1);
+        g2.setColor(new Color(0xB8860B));
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.drawOval(0, 0, size - 1, size - 1);
+        g2.setColor(new Color(0x7B5800));
+        g2.setFont(new Font("SansSerif", Font.BOLD, size / 2));
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
+                (size + fm.getAscent() - fm.getDescent()) / 2);
+        g2.dispose();
+        return new ImageIcon(img);
+    }
+
+    private JPanel makeBellWithBadge(int count) {
+        Color BG_CARD = new Color(6, 12, 15);
+        Color BORDER = new Color(25, 35, 30);
+        Color TEXT_WHITE = new Color(240, 240, 240);
+        Color GREEN = new Color(44, 243, 53);
+
+        JPanel p = new JPanel(null) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(BG_CARD);
+                g2.fillOval(0, 0, 42, 42);
+                g2.setColor(BORDER);
+                g2.drawOval(0, 0, 41, 41);
+                g2.setColor(TEXT_WHITE);
+                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
+                g2.drawString("🔔", 8, 28);
+                g2.setColor(GREEN);
+                g2.fillOval(26, 2, 16, 16);
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("SansSerif", Font.BOLD, 9));
+                FontMetrics fm = g2.getFontMetrics();
+                String s = String.valueOf(count);
+                g2.drawString(s, 34 - fm.stringWidth(s) / 2, 14);
+                g2.dispose();
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(42, 42);
+            }
+        };
+        p.setOpaque(false);
+        return p;
     }
 }

@@ -321,6 +321,7 @@ class RoundedTextField extends JTextField {
                 this.placeholder = placeholder;
                 this.icon = icon;
                 setOpaque(false);
+                setBackground(new Color(0, 0, 0, 0)); // Evita el fondo blanco por defecto en Windows Look & Feel
                 setForeground(Color.WHITE);
                 setCaretColor(Color.WHITE);
                 setFont(new Font("SansSerif", Font.PLAIN, 18));
@@ -535,6 +536,7 @@ class RoundedPasswordField extends JPasswordField {
                 }
 
                 setOpaque(false);
+                setBackground(new Color(0, 0, 0, 0)); // Evita el fondo blanco por defecto en Windows Look & Feel
                 setForeground(Color.WHITE);
                 setCaretColor(Color.WHITE);
                 setFont(new Font("SansSerif", Font.PLAIN, 18));

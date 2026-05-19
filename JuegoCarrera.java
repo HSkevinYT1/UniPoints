@@ -34,6 +34,15 @@ public class JuegoCarrera extends JFrame {
     private final Color COLOR_TEXTO_MUTED = new Color(138, 143, 153);
 
     public JuegoCarrera() {
+        // Cargar datos reales del usuario logueado para consistencia global
+        if (Usuario.getUsuarioActual() != null) {
+            this.monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
+            this.nombreJugador = Usuario.getUsuarioActual().getNombre();
+        } else {
+            this.monedasJugador = 500;
+            this.nombreJugador = "Invitado";
+        }
+
         // Configuración de la Ventana Principal
         setTitle("Unab Points - Carreras de Caballos");
         setSize(1000, 550);
@@ -65,6 +74,7 @@ public class JuegoCarrera extends JFrame {
         btnVolver.setBackground(COLOR_FONDO_PANEL);
         btnVolver.setForeground(COLOR_TEXTO);
         btnVolver.setFocusPainted(false);
+        btnVolver.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
         btnVolver.addActionListener(e -> {
             // 1. Llamamos directamente al método público y estático que arma tu menú
             VentanaJuegos.crearVentanaLimpia();
@@ -84,13 +94,13 @@ public class JuegoCarrera extends JFrame {
         panelIzquierdoHeader.add(lblTitulo);
 
         // Contador de Monedas (Arriba Derecha)
-        lblMonedas = new JLabel(monedasJugador + " 🪙", SwingConstants.CENTER);
+        lblMonedas = new JLabel(String.format("%,d UP", monedasJugador), SwingConstants.CENTER);
         lblMonedas.setOpaque(true);
         lblMonedas.setBackground(COLOR_FONDO_PANEL);
         lblMonedas.setForeground(COLOR_VERDE_ACENTO);
         lblMonedas.setFont(new Font("Arial", Font.BOLD, 14));
         lblMonedas.setBorder(BorderFactory.createLineBorder(COLOR_VERDE_ACENTO, 1, true));
-        lblMonedas.setPreferredSize(new Dimension(110, 35));
+        lblMonedas.setPreferredSize(new Dimension(120, 35));
 
         header.add(panelIzquierdoHeader, BorderLayout.WEST);
         header.add(lblMonedas, BorderLayout.EAST);
@@ -126,15 +136,20 @@ public class JuegoCarrera extends JFrame {
         txtMontoApuesta.setCaretColor(COLOR_TEXTO);
         txtMontoApuesta.setHorizontalAlignment(JTextField.CENTER);
         txtMontoApuesta.setEditable(false);
+        txtMontoApuesta.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
 
         btnMenos = new JButton("-");
         btnMenos.setBackground(COLOR_FONDO_PRINCIPAL);
         btnMenos.setForeground(COLOR_TEXTO);
+        btnMenos.setFocusPainted(false);
+        btnMenos.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
         btnMenos.addActionListener(e -> modificarApuesta(-50));
 
         btnMas = new JButton("+");
         btnMas.setBackground(COLOR_FONDO_PRINCIPAL);
         btnMas.setForeground(COLOR_TEXTO);
+        btnMas.setFocusPainted(false);
+        btnMas.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
         btnMas.addActionListener(e -> modificarApuesta(50));
 
         panelMontoCtrl.add(btnMenos, BorderLayout.WEST);
@@ -154,6 +169,8 @@ public class JuegoCarrera extends JFrame {
             btnRapidos[i].setFont(new Font("Arial", Font.PLAIN, 10));
             btnRapidos[i].setBackground(COLOR_FONDO_PRINCIPAL);
             btnRapidos[i].setForeground(COLOR_TEXTO_MUTED);
+            btnRapidos[i].setFocusPainted(false);
+            btnRapidos[i].setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
             btnRapidos[i].setMargin(new Insets(2, 2, 2, 2));
             btnRapidos[i].addActionListener(e -> {
                 montoApuesta = m;
@@ -200,7 +217,7 @@ public class JuegoCarrera extends JFrame {
 
         JLabel lblGananciaTitulo = new JLabel("Ganancia x2", SwingConstants.CENTER);
         lblGananciaTitulo.setForeground(COLOR_TEXTO_MUTED);
-        lblGananciaPotencial = new JLabel(montoApuesta * 2 + " 🪙", SwingConstants.CENTER);
+        lblGananciaPotencial = new JLabel(String.format("%,d UP", montoApuesta * 2), SwingConstants.CENTER);
         lblGananciaPotencial.setForeground(COLOR_VERDE_ACENTO);
         lblGananciaPotencial.setFont(new Font("Arial", Font.BOLD, 14));
         panelGanancia.add(lblGananciaTitulo);
@@ -214,6 +231,7 @@ public class JuegoCarrera extends JFrame {
         btnApostar.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnApostar.setMaximumSize(new Dimension(210, 40));
         btnApostar.setFocusPainted(false);
+        btnApostar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         btnApostar.addActionListener(e -> iniciarCarrera());
 
         // Organización en el contenedor vertical
@@ -240,19 +258,19 @@ public class JuegoCarrera extends JFrame {
         // Fila Caballo 1
         JPanel p1 = new JPanel(new BorderLayout(10, 0)); p1.setBackground(COLOR_FONDO_PANEL);
         JLabel name1 = new JLabel("🐎 C1: "); name1.setForeground(COLOR_TEXTO);
-        barCaballo1 = new JProgressBar(0, 100); configurarnProgressBar(barCaballo1);
+        barCaballo1 = crearProgresoCarrera();
         p1.add(name1, BorderLayout.WEST); p1.add(barCaballo1, BorderLayout.CENTER);
 
         // Fila Caballo 2
         JPanel p2 = new JPanel(new BorderLayout(10, 0)); p2.setBackground(COLOR_FONDO_PANEL);
         JLabel name2 = new JLabel("🐎 C2: "); name2.setForeground(COLOR_TEXTO);
-        barCaballo2 = new JProgressBar(0, 100); configurarnProgressBar(barCaballo2);
+        barCaballo2 = crearProgresoCarrera();
         p2.add(name2, BorderLayout.WEST); p2.add(barCaballo2, BorderLayout.CENTER);
 
         // Fila Caballo 3
         JPanel p3 = new JPanel(new BorderLayout(10, 0)); p3.setBackground(COLOR_FONDO_PANEL);
         JLabel name3 = new JLabel("🐎 C3: "); name3.setForeground(COLOR_TEXTO);
-        barCaballo3 = new JProgressBar(0, 100); configurarnProgressBar(barCaballo3);
+        barCaballo3 = crearProgresoCarrera();
         p3.add(name3, BorderLayout.WEST); p3.add(barCaballo3, BorderLayout.CENTER);
 
         panel.add(p1);
@@ -298,11 +316,45 @@ public class JuegoCarrera extends JFrame {
         rb.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
-    private void configurarnProgressBar(JProgressBar bar) {
-        bar.setBackground(COLOR_FONDO_PRINCIPAL);
-        bar.setForeground(COLOR_VERDE_ACENTO);
-        bar.setStringPainted(true);
-        bar.setBorderPainted(false);
+    private JProgressBar crearProgresoCarrera() {
+        JProgressBar bar = new JProgressBar(0, 100) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Fondo del carril oscuro
+                g2.setColor(COLOR_FONDO_PRINCIPAL);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+
+                // Borde sutil del carril
+                g2.setColor(COLOR_TEXTO_MUTED);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+
+                // Relleno de la barra de progreso (porcentaje de la carrera)
+                double porcentaje = (double) getValue() / getMaximum();
+                int progressWidth = (int) (getWidth() * porcentaje);
+                if (progressWidth > 0) {
+                    g2.setColor(COLOR_VERDE_ACENTO);
+                    g2.fillRoundRect(0, 0, progressWidth, getHeight(), 12, 12);
+                }
+
+                // Dibujar texto del porcentaje en el centro
+                g2.setFont(new Font("Arial", Font.BOLD, 12));
+                String texto = getValue() + " %";
+                FontMetrics fm = g2.getFontMetrics();
+                int tx = (getWidth() - fm.stringWidth(texto)) / 2;
+                int ty = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+
+                g2.setColor(porcentaje > 0.5 ? COLOR_FONDO_PRINCIPAL : COLOR_VERDE_ACENTO);
+                g2.drawString(texto, tx, ty);
+
+                g2.dispose();
+            }
+        };
+        bar.setOpaque(false);
+        bar.setBorder(BorderFactory.createEmptyBorder());
+        return bar;
     }
 
     private void modificarApuesta(int valor) {
@@ -315,7 +367,7 @@ public class JuegoCarrera extends JFrame {
     }
 
     private void actualizarGananciaPotencial() {
-        lblGananciaPotencial.setText((montoApuesta * 2) + " 🪙");
+        lblGananciaPotencial.setText(String.format("%,d UP", montoApuesta * 2));
     }
 
     private void setControlesHabilitados(boolean habilitado) {
@@ -335,7 +387,7 @@ public class JuegoCarrera extends JFrame {
         // --- CONDICIONAL SOLICITADO: No se puede apostar más de lo que se tiene ---
         if (montoApuesta > monedasJugador) {
             JOptionPane.showMessageDialog(this,
-                    "❌ No tienes suficientes monedas para realizar esta apuesta.",
+                    "❌ No tienes suficientes UP para realizar esta apuesta.",
                     "Saldo Insuficiente",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -348,7 +400,10 @@ public class JuegoCarrera extends JFrame {
 
         // Descontar monedas de la apuesta inicial
         monedasJugador -= montoApuesta;
-        lblMonedas.setText(monedasJugador + " 🪙");
+        lblMonedas.setText(String.format("%,d UP", monedasJugador));
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        }
 
         // Reiniciar pistas
         barCaballo1.setValue(0);
@@ -403,7 +458,7 @@ public class JuegoCarrera extends JFrame {
             int premio = montoApuesta * 2;
             monedasJugador += premio;
             JOptionPane.showMessageDialog(this,
-                    "🎉 ¡Ganaste! El Caballo " + caballoGanador + " llegó primero.\nRecibes: " + premio + " monedas.",
+                    "🎉 ¡Ganaste! El Caballo " + caballoGanador + " llegó primero.\nRecibes: " + premio + " UP.",
                     "¡Victoria!",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -414,7 +469,10 @@ public class JuegoCarrera extends JFrame {
         }
 
         // Actualizar UI post-juego
-        lblMonedas.setText(monedasJugador + " 🪙");
+        lblMonedas.setText(String.format("%,d UP", monedasJugador));
+        if (Usuario.getUsuarioActual() != null) {
+            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        }
         carreraEnCurso = false;
         setControlesHabilitados(true); // Desbloquea controles
     }
