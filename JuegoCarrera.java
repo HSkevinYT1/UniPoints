@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
@@ -35,9 +34,9 @@ public class JuegoCarrera extends JFrame {
 
     public JuegoCarrera() {
         // Cargar datos reales del usuario logueado para consistencia global
-        if (Usuario.getUsuarioActual() != null) {
-            this.monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
-            this.nombreJugador = Usuario.getUsuarioActual().getNombre();
+        if (VentanaLogros.getUsuarioActual() != null) {
+            this.monedasJugador = (int) VentanaLogros.getUsuarioActual().getSaldo();
+            this.nombreJugador = VentanaLogros.getUsuarioActual().getNombre();
         } else {
             this.monedasJugador = 500;
             this.nombreJugador = "Invitado";
@@ -401,8 +400,8 @@ public class JuegoCarrera extends JFrame {
         // Descontar monedas de la apuesta inicial
         monedasJugador -= montoApuesta;
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (Usuario.getUsuarioActual() != null) {
-            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        if (VentanaLogros.getUsuarioActual() != null) {
+            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
         }
 
         // Reiniciar pistas
@@ -470,8 +469,8 @@ public class JuegoCarrera extends JFrame {
 
         // Actualizar UI post-juego
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (Usuario.getUsuarioActual() != null) {
-            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        if (VentanaLogros.getUsuarioActual() != null) {
+            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
         }
         carreraEnCurso = false;
         setControlesHabilitados(true); // Desbloquea controles

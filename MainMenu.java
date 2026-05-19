@@ -28,7 +28,7 @@ public class MainMenu extends JFrame {
     private String userName;
 
     public MainMenu() {
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         this.userName = (actual != null) ? actual.getNombre().split(" ")[0] : "Usuario";
 
         setTitle("Unab Points - Menú Principal");
@@ -93,7 +93,7 @@ public class MainMenu extends JFrame {
         rightPanel.setOpaque(false);
 
         // Badge de saldo UP
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         double saldo = (actual != null) ? actual.getSaldo() : 0;
         JPanel saldoBadge = new JPanel() {
             @Override
@@ -177,8 +177,8 @@ public class MainMenu extends JFrame {
 
                 // Cargar foto de perfil
                 try {
-                    String fotoPath = (Usuario.getUsuarioActual() != null)
-                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                    String fotoPath = (VentanaLogros.getUsuarioActual() != null)
+                            ? VentanaLogros.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
                     ImageIcon icon = new ImageIcon(fotoPath);
                     Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
@@ -241,7 +241,7 @@ public class MainMenu extends JFrame {
                 });
 
                 logoutItem.addActionListener(ae -> {
-                    Usuario.cerrarSesion();
+                    VentanaLogros.cerrarSesion();
                     new Login();
                     dispose();
                 });

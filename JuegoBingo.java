@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -45,9 +43,9 @@ public class JuegoBingo extends JFrame {
 
     public JuegoBingo() {
         // Cargar datos reales del usuario logueado para consistencia global
-        if (Usuario.getUsuarioActual() != null) {
-            this.monedasJugador = (int) Usuario.getUsuarioActual().getSaldo();
-            this.nombreJugador = Usuario.getUsuarioActual().getNombre();
+        if (VentanaLogros.getUsuarioActual() != null) {
+            this.monedasJugador = (int) VentanaLogros.getUsuarioActual().getSaldo();
+            this.nombreJugador = VentanaLogros.getUsuarioActual().getNombre();
         } else {
             this.monedasJugador = 500;
             this.nombreJugador = "Invitado";
@@ -339,8 +337,8 @@ public class JuegoBingo extends JFrame {
         balotasRondaActual += 5;
 
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (Usuario.getUsuarioActual() != null) {
-            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        if (VentanaLogros.getUsuarioActual() != null) {
+            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
         }
         lblBalotasContador.setText("Balotas en juego: " + balotasRondaActual);
     }
@@ -410,8 +408,8 @@ public class JuegoBingo extends JFrame {
 
         monedasJugador -= montoApuesta;
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (Usuario.getUsuarioActual() != null) {
-            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        if (VentanaLogros.getUsuarioActual() != null) {
+            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
         }
 
         generarNuevoCarton();
@@ -485,8 +483,8 @@ public class JuegoBingo extends JFrame {
         lblBalotasContador.setText("Balotas en juego: " + balotasRondaActual);
 
         lblMonedas.setText(String.format("%,d UP", monedasJugador));
-        if (Usuario.getUsuarioActual() != null) {
-            Usuario.getUsuarioActual().setSaldo(monedasJugador);
+        if (VentanaLogros.getUsuarioActual() != null) {
+            VentanaLogros.getUsuarioActual().setSaldo(monedasJugador);
         }
         lblBalotaActual.setText("--");
         juegoEnCurso = false;

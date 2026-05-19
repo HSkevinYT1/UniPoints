@@ -75,7 +75,7 @@ public class Logros {
         int victorias = 0;
         int derrotas = 0;
 
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         if (actual != null) {
             nombreUsuario = actual.getNombre();
             numeroMonedas = (int) actual.getSaldo();
@@ -201,7 +201,7 @@ public class Logros {
                 lblRegalo.setForeground(COLOR_TEXTO_MUTED);
 
                 int recompensa = logro.getRecompensaMonedas();
-                Usuario actualUser = Usuario.getUsuarioActual();
+                VentanaLogros actualUser = VentanaLogros.getUsuarioActual();
                 if (actualUser != null) {
                     actualUser.setSaldo(actualUser.getSaldo() + recompensa);
                     if (pointsLbl != null) {
@@ -346,7 +346,7 @@ public class Logros {
         pointsChip.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 14));
 
         double saldo = 500;
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         if (actual != null) {
             saldo = actual.getSaldo();
         }
@@ -379,8 +379,8 @@ public class Logros {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 try {
-                    String fotoPath = (Usuario.getUsuarioActual() != null)
-                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                    String fotoPath = (VentanaLogros.getUsuarioActual() != null)
+                            ? VentanaLogros.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
                     ImageIcon icon = new ImageIcon(fotoPath);
                     Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
@@ -442,7 +442,7 @@ public class Logros {
                 });
 
                 logoutItem.addActionListener(ae -> {
-                    Usuario.cerrarSesion();
+                    VentanaLogros.cerrarSesion();
                     new Login();
                     ventana.dispose();
                 });

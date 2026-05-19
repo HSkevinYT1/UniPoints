@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 
 public class Places extends JFrame {
@@ -50,10 +49,10 @@ public class Places extends JFrame {
     public Places() {
         // Inicializar usuario de prueba si no hay una sesión activa (ej. si se ejecuta
         // esta ventana sola)
-        if (Usuario.getUsuarioActual() == null) {
-            Usuario testUser = new Usuario("Usuario de Prueba", "prueba@unab.cl", "prueba", "123");
-            Usuario.registrarUsuario(testUser);
-            Usuario.iniciarSesion("prueba", "123");
+        if (VentanaLogros.getUsuarioActual() == null) {
+            VentanaLogros testUser = new VentanaLogros("Usuario de Prueba", "prueba@unab.cl", "prueba", "123");
+            VentanaLogros.registrarUsuario(testUser);
+            VentanaLogros.iniciarSesion("prueba", "123");
         }
 
         setTitle("Lugares – UNAB Points");
@@ -124,7 +123,7 @@ public class Places extends JFrame {
         pointsChip.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 14));
 
         double saldo = 500;
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         if (actual != null) {
             saldo = actual.getSaldo();
         }
@@ -157,8 +156,8 @@ public class Places extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 try {
-                    String fotoPath = (Usuario.getUsuarioActual() != null)
-                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                    String fotoPath = (VentanaLogros.getUsuarioActual() != null)
+                            ? VentanaLogros.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
                     ImageIcon icon = new ImageIcon(fotoPath);
                     Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
@@ -220,7 +219,7 @@ public class Places extends JFrame {
                 });
 
                 logoutItem.addActionListener(ae -> {
-                    Usuario.cerrarSesion();
+                    VentanaLogros.cerrarSesion();
                     new Login();
                     dispose();
                 });
@@ -874,7 +873,7 @@ public class Places extends JFrame {
 
         boolean hasCustomPhoto = false;
         Image customImg = null;
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         if (actual != null && actual.getFotoPerfil() != null && !actual.getFotoPerfil().isEmpty()) {
             try {
                 customImg = new ImageIcon(actual.getFotoPerfil()).getImage();
