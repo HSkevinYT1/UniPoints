@@ -2,7 +2,7 @@
 // aqui se guardan los datos del usuario
 import java.util.HashMap;
 
-public class Usuario {
+public class VentanaLogros {
     private String nombre;
     private String correo;
     private String username;
@@ -16,10 +16,10 @@ public class Usuario {
     private String fotoPerfil;
 
     // base de datos simulada
-    private static HashMap<String, Usuario> usuariosDB = new HashMap<>();
-    private static Usuario usuarioActual = null;
+    private static HashMap<String, VentanaLogros> usuariosDB = new HashMap<>();
+    private static VentanaLogros usuarioActual = null;
 
-    public Usuario(String nombre, String correo, String username, String password) {
+    public VentanaLogros(String nombre, String correo, String username, String password) {
         this.nombre = nombre;
         this.correo = correo;
         this.username = username;
@@ -34,7 +34,7 @@ public class Usuario {
     }
 
     // Registrar un nuevo usuario
-    public static boolean registrarUsuario(Usuario nuevoUsuario) {
+    public static boolean registrarUsuario(VentanaLogros nuevoUsuario) {
         // Verificar si el correo electrónico o el nombre de usuario ya existen
         if (usuariosDB.containsKey(nuevoUsuario.getCorreo()) || usuariosDB.containsKey(nuevoUsuario.getUsername())) {
             return false;
@@ -46,7 +46,7 @@ public class Usuario {
 
     // Logica de inicio de sesion
     public static boolean iniciarSesion(String identificador, String password) {
-        Usuario u = usuariosDB.get(identificador);
+        VentanaLogros u = usuariosDB.get(identificador);
         if (u != null && u.getPassword().equals(password)) {
             usuarioActual = u;
             return true;
@@ -54,7 +54,7 @@ public class Usuario {
         return false;
     }
 
-    public static Usuario getUsuarioActual() {
+    public static VentanaLogros getUsuarioActual() {
         return usuarioActual;
     }
 

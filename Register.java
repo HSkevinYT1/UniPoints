@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.RoundRectangle2D;
 
 public class Register extends JFrame {
 
@@ -161,8 +160,8 @@ public class Register extends JFrame {
                 return;
             }
 
-            Usuario nuevoUsuario = new Usuario(name, email, username, pass);
-            if (Usuario.registrarUsuario(nuevoUsuario)) {
+            VentanaLogros nuevoUsuario = new VentanaLogros(name, email, username, pass);
+            if (VentanaLogros.registrarUsuario(nuevoUsuario)) {
                 JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente. ¡Bienvenido!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 new Login();
                 dispose();
