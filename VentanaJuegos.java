@@ -101,7 +101,7 @@ public class VentanaJuegos {
         pointsChip.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 14));
 
         double saldo = 500;
-        Usuario actual = Usuario.getUsuarioActual();
+        VentanaLogros actual = VentanaLogros.getUsuarioActual();
         if (actual != null) {
             saldo = actual.getSaldo();
         }
@@ -134,8 +134,8 @@ public class VentanaJuegos {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 try {
-                    String fotoPath = (Usuario.getUsuarioActual() != null)
-                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                    String fotoPath = (VentanaLogros.getUsuarioActual() != null)
+                            ? VentanaLogros.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
                     ImageIcon icon = new ImageIcon(fotoPath);
                     Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
@@ -197,7 +197,7 @@ public class VentanaJuegos {
                 });
 
                 logoutItem.addActionListener(ae -> {
-                    Usuario.cerrarSesion();
+                    VentanaLogros.cerrarSesion();
                     new Login();
                     ventana.dispose();
                 });
@@ -384,7 +384,9 @@ public class VentanaJuegos {
 
         // 8. Blackjack
         rejillaJuegos.add(crearCardJuego("Blackjack","Icons/BlackJackGame.png", new Color(252, 103, 1), e -> {
-            /* [REDIRECCIÓN BLACKJACK] */
+            JuegoBlackjack blackjack = new JuegoBlackjack();
+            blackjack.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
         // -----------------------------------------------------------------------------------------
 
