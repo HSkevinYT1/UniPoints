@@ -119,7 +119,9 @@ public class VentanaJuegos {
         pointsChip.add(upLbl);
 
         // Campana con badge
-        JPanel bellPanel = makeBellWithBadge(3);
+        // Campana de notificaciones (global)
+        JPanel bellPanel = CampanaNotificaciones.crear(ventana);
+
 
         // Avatar del usuario con popup de Cerrar sesión
         JPanel avatarPanel = new JPanel() {

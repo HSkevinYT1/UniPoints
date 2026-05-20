@@ -40,6 +40,7 @@ public class MainMenu extends JFrame {
     
     // Lista de tarjetas para escala dinámica
     private List<MenuCardPanel> cardsList = new ArrayList<>();
+    private JPanel bellPanel;
 
     public MainMenu() {
         Usuario actual = Usuario.getUsuarioActual();
@@ -223,40 +224,8 @@ public class MainMenu extends JFrame {
         };
         saldoBadge.setOpaque(false);
 
-        // Campana de notificaciones
-        JPanel bellPanel = new JPanel() {
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension((int)(38 * currentScale), (int)(38 * currentScale));
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Icono campana (simplificada)
-                g2.setColor(TEXT_SECONDARY);
-                g2.setStroke(new BasicStroke(2f * currentScale, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                // Cuerpo campana
-                g2.drawArc((int)(8 * currentScale), (int)(6 * currentScale), (int)(22 * currentScale), (int)(22 * currentScale), 0, 180);
-                g2.drawLine((int)(8 * currentScale), (int)(17 * currentScale), (int)(8 * currentScale), (int)(26 * currentScale));
-                g2.drawLine((int)(30 * currentScale), (int)(17 * currentScale), (int)(30 * currentScale), (int)(26 * currentScale));
-                g2.drawLine((int)(8 * currentScale), (int)(26 * currentScale), (int)(30 * currentScale), (int)(26 * currentScale));
-                // Badana
-                g2.drawLine((int)(16 * currentScale), (int)(29 * currentScale), (int)(22 * currentScale), (int)(29 * currentScale));
-
-                // Badge rojo con número
-                g2.setColor(new Color(230, 50, 50));
-                g2.fillOval((int)(23 * currentScale), (int)(2 * currentScale), (int)(16 * currentScale), (int)(16 * currentScale));
-                g2.setColor(Color.WHITE);
-                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(10 * currentScale)));
-                g2.drawString("3", (int)(28 * currentScale), (int)(14 * currentScale));
-                g2.dispose();
-            }
-        };
-        bellPanel.setOpaque(false);
-        bellPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Campana de notificaciones (global)
+        bellPanel = CampanaNotificaciones.crear(this);
 
         // Avatar del usuario
         JPanel avatarPanel = new JPanel() {
@@ -587,6 +556,7 @@ public class MainMenu extends JFrame {
             g2.dispose();
         }
     }
+
 
     // ─── MAIN ────────────────────────────────────────────────────────────────
     public static void main(String[] args) {

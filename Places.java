@@ -153,7 +153,9 @@ public class Places extends JFrame {
         pointsChip.add(upLbl);
 
         // Campana con badge
-        JPanel bellPanel = makeBellWithBadge(3);
+        // Campana de notificaciones (global)
+        JPanel bellPanel = CampanaNotificaciones.crear(this);
+
 
         // Avatar del usuario (idéntico a MainMenu, con popup de Cerrar sesión)
         JPanel avatarPanel = new JPanel() {

@@ -96,8 +96,9 @@ public class CalculadoraNotas extends JFrame {
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         right.setOpaque(false);
         right.add(makePointsChip());
-        right.add(makeBellWithBadge(3));
+        right.add(CampanaNotificaciones.crear(this));
         right.add(makeAvatarPanel());
+
 
         header.add(left, BorderLayout.WEST);
         header.add(right, BorderLayout.EAST);
