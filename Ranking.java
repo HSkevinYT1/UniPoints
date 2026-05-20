@@ -82,7 +82,11 @@ public class Ranking extends JFrame {
         panelPrincipal.add(scroll, BorderLayout.CENTER);
 
         add(panelPrincipal);
+
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
     }
+
 
     // =========================
     // TOP 3

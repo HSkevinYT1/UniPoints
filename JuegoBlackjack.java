@@ -64,7 +64,11 @@ public class JuegoBlackjack extends JFrame {
 
         crearNuevoMazo();
         actualizarEstadoControles();
+
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
     }
+
 
     // Crea la barra superior con boton de volver, nombre y saldo.
     private JPanel crearHeader() {

@@ -1,14 +1,11 @@
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * GestorNotificaciones - Singleton global de notificaciones.
- * Cualquier ventana puede leer y marcar notificaciones desde aquí.
- */
 public class GestorNotificaciones {
 
-    // ── Modelo ────────────────────────────────────────────────────────────────
     public static class Notificacion {
+
         public final String emoji;
         public final String titulo;
         public final String descripcion;
@@ -16,21 +13,20 @@ public class GestorNotificaciones {
         public boolean leida;
 
         public Notificacion(String emoji, String titulo, String descripcion, String tiempo) {
-            this.emoji       = emoji;
-            this.titulo      = titulo;
+            this.emoji = emoji;
+            this.titulo = titulo;
             this.descripcion = descripcion;
-            this.tiempo      = tiempo;
-            this.leida       = false;
+            this.tiempo = tiempo;
+            this.leida = false;
         }
     }
 
-    // ── Singleton ─────────────────────────────────────────────────────────────
     private static GestorNotificaciones instancia;
 
     private final List<Notificacion> lista = new ArrayList<>();
 
     private GestorNotificaciones() {
-        // Notificaciones de ejemplo (se pueden agregar dinámicamente en el juego)
+        // Notificaciones
         lista.add(new Notificacion("\uD83C\uDFAE", "Logro desbloqueado",
                 "Ganaste el logro 'Primera Victoria'", "Hace 2 min"));
         lista.add(new Notificacion("\uD83D\uDCB0", "Saldo recibido",
@@ -50,8 +46,6 @@ public class GestorNotificaciones {
         return instancia;
     }
 
-    // ── API pública ───────────────────────────────────────────────────────────
-
     public List<Notificacion> getLista() {
         return lista;
     }
@@ -59,7 +53,9 @@ public class GestorNotificaciones {
     public int contarNoLeidas() {
         int c = 0;
         for (Notificacion n : lista) {
-            if (!n.leida) c++;
+            if (!n.leida) {
+                c++;
+            }
         }
         return c;
     }
@@ -70,7 +66,6 @@ public class GestorNotificaciones {
         }
     }
 
-    /** Agrega una notificación nueva (no leída) en tiempo de ejecución. */
     public void agregar(String emoji, String titulo, String descripcion, String tiempo) {
         lista.add(0, new Notificacion(emoji, titulo, descripcion, tiempo));
     }

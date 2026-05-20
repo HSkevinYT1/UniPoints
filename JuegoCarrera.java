@@ -1,7 +1,8 @@
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Random;
+import javax.swing.*;
 
 public class JuegoCarrera extends JFrame {
 
@@ -65,6 +66,9 @@ public class JuegoCarrera extends JFrame {
 
         // 4. PANEL DERECHO (CÓMO JUGAR)
         add(crearPanelComoJugar(), BorderLayout.EAST);
+
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
     }
 
     private JPanel crearHeader() {
@@ -199,9 +203,15 @@ public class JuegoCarrera extends JFrame {
         grupoCaballos.add(rbCaballo3);
 
         ActionListener rbListener = e -> {
-            if (rbCaballo1.isSelected()) caballoSeleccionado = 1;
-            if (rbCaballo2.isSelected()) caballoSeleccionado = 2;
-            if (rbCaballo3.isSelected()) caballoSeleccionado = 3;
+            if (rbCaballo1.isSelected()) {
+                caballoSeleccionado = 1;
+            }
+            if (rbCaballo2.isSelected()) {
+                caballoSeleccionado = 2;
+            }
+            if (rbCaballo3.isSelected()) {
+                caballoSeleccionado = 3;
+            }
         };
         rbCaballo1.addActionListener(rbListener);
         rbCaballo2.addActionListener(rbListener);
@@ -238,14 +248,22 @@ public class JuegoCarrera extends JFrame {
         btnApostar.addActionListener(e -> iniciarCarrera());
 
         // Organización en el contenedor vertical
-        panel.add(lblApuesta); panel.add(Box.createVerticalStrut(5));
-        panel.add(lblMonto); panel.add(Box.createVerticalStrut(5));
-        panel.add(panelMontoCtrl); panel.add(Box.createVerticalStrut(8));
-        panel.add(panelBotonesRapidos); panel.add(Box.createVerticalStrut(15));
-        panel.add(lblSeleccion); panel.add(Box.createVerticalStrut(5));
-        panel.add(rbCaballo1); panel.add(rbCaballo2); panel.add(rbCaballo3);
+        panel.add(lblApuesta);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(lblMonto);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(panelMontoCtrl);
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(panelBotonesRapidos);
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(lblSeleccion);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(rbCaballo1);
+        panel.add(rbCaballo2);
+        panel.add(rbCaballo3);
         panel.add(Box.createVerticalGlue());
-        panel.add(panelGanancia); panel.add(Box.createVerticalStrut(15));
+        panel.add(panelGanancia);
+        panel.add(Box.createVerticalStrut(15));
         panel.add(btnApostar);
 
         return panel;
@@ -259,22 +277,31 @@ public class JuegoCarrera extends JFrame {
                 0, 0, new Font("Arial", Font.BOLD, 14), COLOR_TEXTO));
 
         // Fila Caballo 1
-        JPanel p1 = new JPanel(new BorderLayout(10, 0)); p1.setBackground(COLOR_FONDO_PANEL);
-        JLabel name1 = new JLabel("🐎 C1: "); name1.setForeground(COLOR_TEXTO);
+        JPanel p1 = new JPanel(new BorderLayout(10, 0));
+        p1.setBackground(COLOR_FONDO_PANEL);
+        JLabel name1 = new JLabel("🐎 C1: ");
+        name1.setForeground(COLOR_TEXTO);
         barCaballo1 = crearProgresoCarrera();
-        p1.add(name1, BorderLayout.WEST); p1.add(barCaballo1, BorderLayout.CENTER);
+        p1.add(name1, BorderLayout.WEST);
+        p1.add(barCaballo1, BorderLayout.CENTER);
 
         // Fila Caballo 2
-        JPanel p2 = new JPanel(new BorderLayout(10, 0)); p2.setBackground(COLOR_FONDO_PANEL);
-        JLabel name2 = new JLabel("🐎 C2: "); name2.setForeground(COLOR_TEXTO);
+        JPanel p2 = new JPanel(new BorderLayout(10, 0));
+        p2.setBackground(COLOR_FONDO_PANEL);
+        JLabel name2 = new JLabel("🐎 C2: ");
+        name2.setForeground(COLOR_TEXTO);
         barCaballo2 = crearProgresoCarrera();
-        p2.add(name2, BorderLayout.WEST); p2.add(barCaballo2, BorderLayout.CENTER);
+        p2.add(name2, BorderLayout.WEST);
+        p2.add(barCaballo2, BorderLayout.CENTER);
 
         // Fila Caballo 3
-        JPanel p3 = new JPanel(new BorderLayout(10, 0)); p3.setBackground(COLOR_FONDO_PANEL);
-        JLabel name3 = new JLabel("🐎 C3: "); name3.setForeground(COLOR_TEXTO);
+        JPanel p3 = new JPanel(new BorderLayout(10, 0));
+        p3.setBackground(COLOR_FONDO_PANEL);
+        JLabel name3 = new JLabel("🐎 C3: ");
+        name3.setForeground(COLOR_TEXTO);
         barCaballo3 = crearProgresoCarrera();
-        p3.add(name3, BorderLayout.WEST); p3.add(barCaballo3, BorderLayout.CENTER);
+        p3.add(name3, BorderLayout.WEST);
+        p3.add(barCaballo3, BorderLayout.CENTER);
 
         panel.add(p1);
         panel.add(p2);
@@ -361,7 +388,9 @@ public class JuegoCarrera extends JFrame {
     }
 
     private void modificarApuesta(int valor) {
-        if (carreraEnCurso) return;
+        if (carreraEnCurso) {
+            return;
+        }
         if (montoApuesta + valor >= 50) { // Mínimo de apuesta: 50 monedas
             montoApuesta += valor;
             txtMontoApuesta.setText(String.valueOf(montoApuesta));
@@ -381,7 +410,9 @@ public class JuegoCarrera extends JFrame {
         rbCaballo2.setEnabled(habilitado);
         rbCaballo3.setEnabled(habilitado);
         for (JButton btn : btnRapidos) {
-            if (btn != null) btn.setEnabled(habilitado);
+            if (btn != null) {
+                btn.setEnabled(habilitado);
+            }
         }
     }
 
@@ -396,7 +427,9 @@ public class JuegoCarrera extends JFrame {
             return;
         }
 
-        if (carreraEnCurso) return;
+        if (carreraEnCurso) {
+            return;
+        }
 
         carreraEnCurso = true;
         setControlesHabilitados(false); // Bloquea controles para evitar exploits
@@ -442,8 +475,12 @@ public class JuegoCarrera extends JFrame {
 
             // Determinar Ganador
             int ganador = 1;
-            if (c2 >= 100) ganador = 2;
-            if (c3 >= 100) ganador = 3;
+            if (c2 >= 100) {
+                ganador = 2;
+            }
+            if (c3 >= 100) {
+                ganador = 3;
+            }
 
             final int caballoGanador = ganador;
 
@@ -459,7 +496,7 @@ public class JuegoCarrera extends JFrame {
     private void evaluarResultado(int caballoGanador) {
         if (caballoSeleccionado == caballoGanador) {
             int premio = montoApuesta * 2;
-            if(JuegosGanadosSeguidos < 3){
+            if (JuegosGanadosSeguidos < 3) {
                 JuegosGanadosSeguidos = JuegosGanadosSeguidos + 1;
                 System.out.println("JuegosGanadosSeguidos");
 

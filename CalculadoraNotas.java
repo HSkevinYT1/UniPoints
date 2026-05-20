@@ -42,7 +42,8 @@ public class CalculadoraNotas extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
-        preserveMaximizedState();
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
 
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(BG_DARK);
@@ -55,15 +56,6 @@ public class CalculadoraNotas extends JFrame {
         setVisible(true);
     }
 
-    // Mantiene la ventana maximizada si el usuario venia trabajando asi.
-    private void preserveMaximizedState() {
-        for (Frame frame : Frame.getFrames()) {
-            if (frame.isVisible() && (frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
-                setExtendedState(JFrame.MAXIMIZED_BOTH);
-                return;
-            }
-        }
-    }
 
     // Crea la barra superior con boton de volver, saldo, notificaciones y avatar.
     private JPanel buildHeader() {

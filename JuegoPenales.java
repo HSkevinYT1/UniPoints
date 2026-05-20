@@ -74,7 +74,11 @@ public class JuegoPenales extends JFrame {
 
         // 4. PANEL DERECHO (ESTADÍSTICAS Y REGLAS)
         add(crearPanelInfo(), BorderLayout.EAST);
+
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
     }
+
 
     private JPanel crearHeader() {
         JPanel header = new JPanel(new BorderLayout());

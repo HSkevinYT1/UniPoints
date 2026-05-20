@@ -67,17 +67,9 @@ public class Logros {
         // cambiarlo a EXIT_ON_CLOSE si deseas cerrar todo)
         ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Preservar estado de pantalla completa
-        boolean maximizado = false;
-        for (java.awt.Frame f : java.awt.Frame.getFrames()) {
-            if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
-                maximizado = true;
-                break;
-            }
-        }
-        if (maximizado) {
-            ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(ventana);
+
 
         // --- VARIABLES PARAMETRIZADAS DEL USUARIO ---
         String nombreUsuario = "Invitado";

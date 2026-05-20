@@ -72,7 +72,11 @@ public class JuegoBingo extends JFrame {
 
         // 4. PANEL DERECHO (CÓMO JUGAR)
         add(crearPanelComoJugar(), BorderLayout.EAST);
+
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(this);
     }
+
 
     private JPanel crearHeader() {
         JPanel header = new JPanel(new BorderLayout());

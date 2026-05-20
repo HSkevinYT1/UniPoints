@@ -16,17 +16,9 @@ public class VentanaJuegos {
         ventana.setLocationRelativeTo(null);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cambiado a EXIT para cerrar todo
 
-        // Preservar estado de pantalla completa
-        boolean maximizado = false;
-        for (java.awt.Frame f : java.awt.Frame.getFrames()) {
-            if (f.isVisible() && (f.getExtendedState() & java.awt.Frame.MAXIMIZED_BOTH) == java.awt.Frame.MAXIMIZED_BOTH) {
-                maximizado = true;
-                break;
-            }
-        }
-        if (maximizado) {
-            ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
+        // Preservar tamaño/maximizado
+        WindowPreserver.configurarVentana(ventana);
+
 
         JPanel contenedorPrincipal = new JPanel(new BorderLayout());
         contenedorPrincipal.setBackground(new Color(13, 13, 13));

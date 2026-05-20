@@ -226,9 +226,13 @@ public class Login extends JFrame {
                 container.add(rightPanel);
                 background.add(container);
                 add(background);
+                // Preservar tamaño/maximizado
+                WindowPreserver.configurarVentana(this);
 
                 setVisible(true);
         }
+
+
 
         public static void main(String[] args) {
                 SwingUtilities.invokeLater(Login::new);
