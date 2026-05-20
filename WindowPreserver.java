@@ -1,6 +1,8 @@
 import java.awt.Frame;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+import java.io.File;
 
 public class WindowPreserver {
     // Estado global compartido por todas las ventanas de la aplicación
@@ -30,6 +32,16 @@ public class WindowPreserver {
      */
     public static void configurarVentana(JFrame nuevaVentana) {
         if (nuevaVentana == null) return;
+
+        // Establecer el icono de la aplicación
+        try {
+            File iconFile = new File("Icons/IconPlaceHolder.png");
+            if (iconFile.exists()) {
+                nuevaVentana.setIconImage(new ImageIcon(iconFile.getAbsolutePath()).getImage());
+            }
+        } catch (Exception e) {
+            // ignorar fallas al cargar el icono
+        }
 
         // Aplicamos el estado guardado
         if (maximized && nuevaVentana.isResizable()) {

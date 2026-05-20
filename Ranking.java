@@ -2,6 +2,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.util.List;
+import java.awt.geom.Ellipse2D;
+import java.io.File;
 
 public class Ranking extends JFrame {
 
@@ -34,9 +36,17 @@ public class Ranking extends JFrame {
         });
         headerPanel.add(btnVolver);
 
-        JLabel titulo = new JLabel("🏆 Ranking Global");
+        JLabel titulo = new JLabel("Ranking Global");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Arial", Font.BOLD, 32));
+        try {
+            ImageIcon rawTrophy = new ImageIcon("Icons/trophy.png");
+            Image imgTrophy = rawTrophy.getImage().getScaledInstance(35, 35, Image.SCALE_SMOOTH);
+            titulo.setIcon(new ImageIcon(imgTrophy));
+            titulo.setIconTextGap(15);
+        } catch (Exception e) {
+            // fallback
+        }
         headerPanel.add(titulo);
 
         panelPrincipal.add(headerPanel, BorderLayout.NORTH);
@@ -48,9 +58,10 @@ public class Ranking extends JFrame {
 
         // Obtener ranking dinámico
         List<Usuario> ranking = Usuario.getRankingGlobal();
+        int limite = Math.min(ranking.size(), 12);
 
         // =========================
-        // TOP 3
+        // TOP 3 (Columnas Podio)
         // =========================
         JPanel top3 = new JPanel(new GridLayout(1, 3, 20, 0));
         top3.setBackground(new Color(11, 15, 20));
@@ -63,10 +74,11 @@ public class Ranking extends JFrame {
         // Podio: Plata (2º), Oro (1º), Bronce (3º)
         if (segundo != null) {
             top3.add(crearTopJugador(
-                    "🥈",
+                    "2º",
                     segundo.getNombre(),
                     String.format("%,.0f UP", segundo.getSaldo()),
-                    new Color(192, 192, 192)
+                    new Color(192, 192, 192),
+                    segundo.getFotoPerfil()
             ));
         } else {
             top3.add(new JPanel() {{ setOpaque(false); }});
@@ -74,10 +86,11 @@ public class Ranking extends JFrame {
 
         if (primero != null) {
             top3.add(crearTopJugador(
-                    "🥇",
+                    "1º",
                     primero.getNombre(),
                     String.format("%,.0f UP", primero.getSaldo()),
-                    new Color(255, 215, 0)
+                    new Color(255, 215, 0),
+                    primero.getFotoPerfil()
             ));
         } else {
             top3.add(new JPanel() {{ setOpaque(false); }});
@@ -85,10 +98,11 @@ public class Ranking extends JFrame {
 
         if (tercero != null) {
             top3.add(crearTopJugador(
-                    "🥉",
+                    "3º",
                     tercero.getNombre(),
                     String.format("%,.0f UP", tercero.getSaldo()),
-                    new Color(205, 127, 50)
+                    new Color(205, 127, 50),
+                    tercero.getFotoPerfil()
             ));
         } else {
             top3.add(new JPanel() {{ setOpaque(false); }});
@@ -97,14 +111,14 @@ public class Ranking extends JFrame {
         contenido.add(top3);
 
         // =========================
-        // RESTO DEL TOP
+        // RESTO DEL TOP (Jugadores 4 a 12)
         // =========================
         int maxPuntos = primero != null ? (int) primero.getSaldo() : 20000;
         if (maxPuntos <= 0) maxPuntos = 20000;
 
-        for (int i = 3; i < ranking.size(); i++) {
+        for (int i = 3; i < limite; i++) {
             Usuario u = ranking.get(i);
-            contenido.add(crearJugador(i + 1, u.getNombre(), (int) u.getSaldo(), maxPuntos));
+            contenido.add(crearJugador(i + 1, u.getNombre(), (int) u.getSaldo(), maxPuntos, u.getFotoPerfil()));
         }
 
         JScrollPane scroll = new JScrollPane(contenido);
@@ -120,107 +134,180 @@ public class Ranking extends JFrame {
     }
 
     // =========================
-    // TOP 3 CARD CREATOR
+    // AVATAR COMPONENT GENERATOR
     // =========================
-    private JPanel crearTopJugador(String emoji, String nombre, String puntos, Color color) {
+    private JComponent crearComponenteAvatar(String nombre, String fotoPerfilPath, int size, Color fallbackColor) {
+        JPanel avatarPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                boolean pintado = false;
+                if (fotoPerfilPath != null && !fotoPerfilPath.isEmpty()) {
+                    try {
+                        File imgFile = new File(fotoPerfilPath);
+                        if (imgFile.exists()) {
+                            ImageIcon icon = new ImageIcon(fotoPerfilPath);
+                            Image img = icon.getImage();
+                            g2.setClip(new Ellipse2D.Double(0, 0, size, size));
+                            g2.drawImage(img, 0, 0, size, size, null);
+                            g2.setClip(null);
+                            pintado = true;
+                        }
+                    } catch (Exception e) {
+                        // ignore and fallback
+                    }
+                }
+
+                if (!pintado) {
+                    g2.setColor(fallbackColor != null ? fallbackColor : Color.GREEN);
+                    g2.fillOval(0, 0, size, size);
+                    
+                    g2.setColor(Color.BLACK);
+                    g2.setFont(new Font("Arial", Font.BOLD, size / 2));
+                    FontMetrics fm = g2.getFontMetrics();
+                    String initial = (nombre != null && !nombre.isEmpty()) ? nombre.substring(0, 1).toUpperCase() : "?";
+                    int x = (size - fm.stringWidth(initial)) / 2;
+                    int y = ((size - fm.getHeight()) / 2) + fm.getAscent();
+                    g2.drawString(initial, x, y);
+                }
+
+                g2.dispose();
+            }
+        };
+        avatarPanel.setPreferredSize(new Dimension(size, size));
+        avatarPanel.setMaximumSize(new Dimension(size, size));
+        avatarPanel.setMinimumSize(new Dimension(size, size));
+        avatarPanel.setOpaque(false);
+        return avatarPanel;
+    }
+
+    // =========================
+    // TOP 3 CARD CREATOR (TEXTO)
+    // =========================
+    private JPanel crearTopJugador(String puestoTxt, String nombre, String puntos, Color color, String fotoPerfilPath) {
 
         JPanel card = new JPanel();
         card.setBackground(new Color(18, 24, 33));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(new EmptyBorder(20, 20, 20, 20));
+        card.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        JLabel icono = new JLabel(emoji);
-        icono.setFont(new Font("Arial", Font.PLAIN, 45));
-        icono.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel puestoLabel = new JLabel(puestoTxt);
+        puestoLabel.setForeground(color);
+        puestoLabel.setFont(new Font("Arial", Font.BOLD, 36));
+        puestoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String initial = (nombre != null && !nombre.isEmpty()) ? nombre.substring(0, 1) : "?";
-        JLabel avatar = new JLabel(initial);
-        avatar.setOpaque(true);
-        avatar.setBackground(color);
-        avatar.setForeground(Color.BLACK);
-        avatar.setPreferredSize(new Dimension(70, 70));
-        avatar.setMaximumSize(new Dimension(70, 70));
-        avatar.setHorizontalAlignment(SwingConstants.CENTER);
-        avatar.setFont(new Font("Arial", Font.BOLD, 32));
+        int avatarSize = (puestoTxt.equals("1º")) ? 80 : 65;
+        JComponent avatar = crearComponenteAvatar(nombre, fotoPerfilPath, avatarSize, color);
         avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        int nombreFontSize = (puestoTxt.equals("1º")) ? 22 : 18;
         JLabel nombreLabel = new JLabel(nombre);
         nombreLabel.setForeground(Color.WHITE);
-        nombreLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        nombreLabel.setFont(new Font("Arial", Font.BOLD, nombreFontSize));
         nombreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        int puntosFontSize = (puestoTxt.equals("1º")) ? 20 : 16;
         JLabel puntosLabel = new JLabel(puntos);
         puntosLabel.setForeground(color);
-        puntosLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        puntosLabel.setFont(new Font("Arial", Font.BOLD, puntosFontSize));
         puntosLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        card.add(icono);
-        card.add(Box.createVerticalStrut(10));
+        card.add(puestoLabel);
+        card.add(Box.createVerticalStrut(6));
         card.add(avatar);
-        card.add(Box.createVerticalStrut(15));
+        card.add(Box.createVerticalStrut(10));
         card.add(nombreLabel);
-        card.add(Box.createVerticalStrut(5));
+        card.add(Box.createVerticalStrut(3));
         card.add(puntosLabel);
 
         return card;
     }
 
     // =========================
-    // JUGADORES 4+ ROW CREATOR
+    // JUGADORES ROW CREATOR
     // =========================
-    private JPanel crearJugador(int posicion, String nombre, int puntos, int maxPuntos) {
+    private JPanel crearJugador(int posicion, String nombre, int puntos, int maxPuntos, String fotoPerfilPath) {
 
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setBackground(new Color(11, 15, 20));
         wrapper.setBorder(new EmptyBorder(0, 20, 15, 20));
 
-        JPanel card = new JPanel(new BorderLayout());
+        JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(new Color(18, 24, 33));
-        card.setBorder(new EmptyBorder(15, 20, 15, 20));
+        card.setBorder(new EmptyBorder(12, 20, 12, 20));
 
-        // IZQUIERDA
-        JPanel izquierda = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        izquierda.setBackground(new Color(18, 24, 33));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.gridy = 0;
 
+        // 1. Posición
         JLabel pos = new JLabel("#" + posicion);
-        pos.setForeground(Color.GREEN);
+        pos.setForeground(new Color(46, 204, 113));
         pos.setFont(new Font("Arial", Font.BOLD, 20));
+        pos.setPreferredSize(new Dimension(50, 45));
+        gbc.gridx = 0;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        card.add(pos, gbc);
 
-        String initial = (nombre != null && !nombre.isEmpty()) ? nombre.substring(0, 1) : "?";
-        JLabel avatar = new JLabel(initial);
-        avatar.setOpaque(true);
-        avatar.setBackground(Color.GREEN);
-        avatar.setForeground(Color.BLACK);
-        avatar.setPreferredSize(new Dimension(45, 45));
-        avatar.setHorizontalAlignment(SwingConstants.CENTER);
-        avatar.setFont(new Font("Arial", Font.BOLD, 22));
+        // 2. Avatar
+        JComponent avatar = crearComponenteAvatar(nombre, fotoPerfilPath, 45, new Color(46, 204, 113));
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        card.add(avatar, gbc);
 
+        // Espaciador
+        gbc.gridx = 2;
+        card.add(Box.createHorizontalStrut(15), gbc);
+
+        // 3. Nombre
         JLabel nombreLabel = new JLabel(nombre);
         nombreLabel.setForeground(Color.WHITE);
         nombreLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        nombreLabel.setPreferredSize(new Dimension(220, 45));
+        gbc.gridx = 3;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        card.add(nombreLabel, gbc);
 
-        izquierda.add(pos);
-        izquierda.add(Box.createHorizontalStrut(15));
-        izquierda.add(avatar);
-        izquierda.add(Box.createHorizontalStrut(15));
-        izquierda.add(nombreLabel);
+        // Espaciador
+        gbc.gridx = 4;
+        card.add(Box.createHorizontalStrut(20), gbc);
 
-        // CENTRO
+        // 4. Barra de Progreso
         JProgressBar barra = new JProgressBar();
         barra.setMaximum(maxPuntos);
         barra.setValue(puntos);
-        barra.setForeground(Color.GREEN);
-        barra.setBackground(new Color(40, 40, 40));
-        barra.setPreferredSize(new Dimension(250, 20));
+        barra.setForeground(new Color(46, 204, 113));
+        barra.setBackground(new Color(30, 36, 45));
+        barra.setBorderPainted(false);
+        barra.setPreferredSize(new Dimension(200, 10));
+        gbc.gridx = 5;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        card.add(barra, gbc);
 
-        // DERECHA
+        // Espaciador
+        gbc.gridx = 6;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        card.add(Box.createHorizontalStrut(25), gbc);
+
+        // 5. Puntos
         JLabel puntosLabel = new JLabel(String.format("%,d UP", puntos));
-        puntosLabel.setForeground(Color.GREEN);
+        puntosLabel.setForeground(new Color(46, 204, 113));
         puntosLabel.setFont(new Font("Arial", Font.BOLD, 18));
-
-        card.add(izquierda, BorderLayout.WEST);
-        card.add(barra, BorderLayout.CENTER);
-        card.add(puntosLabel, BorderLayout.EAST);
+        puntosLabel.setPreferredSize(new Dimension(130, 45));
+        puntosLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        gbc.gridx = 7;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        card.add(puntosLabel, gbc);
 
         wrapper.add(card);
 
