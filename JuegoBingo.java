@@ -52,7 +52,7 @@ public class JuegoBingo extends JFrame {
         }
 
         setTitle("Unab Points - Casino Bingo");
-        setSize(1000, 580);
+        setSize(1300, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
@@ -72,8 +72,6 @@ public class JuegoBingo extends JFrame {
 
         // 4. PANEL DERECHO (CÓMO JUGAR)
         add(crearPanelComoJugar(), BorderLayout.EAST);
-
-        // Preservar tamaño/maximizado
         WindowPreserver.configurarVentana(this);
     }
 

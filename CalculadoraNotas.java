@@ -42,8 +42,6 @@ public class CalculadoraNotas extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(this);
 
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(BG_DARK);
@@ -53,6 +51,7 @@ public class CalculadoraNotas extends JFrame {
         setContentPane(root);
         addDefaultRows();
         calcular();
+        WindowPreserver.configurarVentana(this);
         setVisible(true);
     }
 

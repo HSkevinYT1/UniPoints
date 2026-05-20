@@ -59,16 +59,11 @@ public class Logros {
         // tareas
         JFrame ventana = new JFrame();
         ventana.setTitle("Perfil de Usuario");
-        ventana.setSize(900, 600); // Tamaño inicial base equilibrado
-        ventana.setMinimumSize(new Dimension(800, 550)); // Evita que el usuario la rompa al achicarla demasiado
+        ventana.setSize(1300, 850);
+        ventana.setMinimumSize(new Dimension(800, 550));
         ventana.setLocationRelativeTo(null);
 
-        // Al cerrarse esta ventana independiente, volvemos a dar foco o control (puedes
-        // cambiarlo a EXIT_ON_CLOSE si deseas cerrar todo)
         ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(ventana);
 
 
         // --- VARIABLES PARAMETRIZADAS DEL USUARIO ---
@@ -260,6 +255,7 @@ public class Logros {
         // Sin botón inferior para maximizar el espacio vertical de forma idéntica a Places y Chat
 
         ventana.add(contenedorPrincipal);
+        WindowPreserver.configurarVentana(ventana);
         ventana.setVisible(true);
     }
 

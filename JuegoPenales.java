@@ -57,7 +57,7 @@ public class JuegoPenales extends JFrame {
         }
 
         setTitle("Unab Points - Penalty Shootout PRO");
-        setSize(1100, 650);
+        setSize(1300, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
@@ -74,8 +74,6 @@ public class JuegoPenales extends JFrame {
 
         // 4. PANEL DERECHO (ESTADÍSTICAS Y REGLAS)
         add(crearPanelInfo(), BorderLayout.EAST);
-
-        // Preservar tamaño/maximizado
         WindowPreserver.configurarVentana(this);
     }
 

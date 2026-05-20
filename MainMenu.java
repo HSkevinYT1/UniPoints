@@ -53,9 +53,6 @@ public class MainMenu extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
 
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(this);
-
         JPanel root = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -116,6 +113,7 @@ public class MainMenu extends JFrame {
         root.add(mainAreaPanel, BorderLayout.CENTER);
 
         setContentPane(root);
+        WindowPreserver.configurarVentana(this);
         setVisible(true);
 
         // Control dinámico de escala tipo CanvasScaler de Unity
@@ -370,7 +368,10 @@ public class MainMenu extends JFrame {
             VentanaJuegos.crearVentanaLimpia();
             dispose();
         })));
-        gridPanel.add(addCardToList(new MenuCardPanel("Ranking", "trophy", null)));
+        gridPanel.add(addCardToList(new MenuCardPanel("Ranking", "trophy", () -> {
+            new Ranking();
+            dispose();
+        })));
         gridPanel.add(addCardToList(new MenuCardPanel("Historial", "clock", () -> {
             new History();
             dispose();

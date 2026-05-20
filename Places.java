@@ -62,10 +62,6 @@ public class Places extends JFrame {
         setBackground(BG_DARK);
         setLocationRelativeTo(null);
 
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(this);
-
-
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(BG_DARK);
 
@@ -73,6 +69,7 @@ public class Places extends JFrame {
         root.add(buildContent(), BorderLayout.CENTER);
 
         setContentPane(root);
+        WindowPreserver.configurarVentana(this);
         setVisible(true);
     }
 

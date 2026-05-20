@@ -1,7 +1,8 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class Register extends JFrame {
 
@@ -136,7 +137,7 @@ public class Register extends JFrame {
         // BOTÓN: Crear cuenta
         RoundedButton registerBtn = new RoundedButton("Crear cuenta");
         registerBtn.setBounds(70, 500, 430, 55);
-        
+
         // Acción: registrar usuario
         registerBtn.addActionListener(e -> {
             String name = nameField.getText().trim();
@@ -164,12 +165,12 @@ public class Register extends JFrame {
             if (Usuario.registrarUsuario(nuevoUsuario)) {
                 JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente. ¡Bienvenido!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 new Login();
-                dispose();
+                SwingUtilities.invokeLater(Register.this::dispose);
             } else {
                 JOptionPane.showMessageDialog(this, "El correo o nombre de usuario ya está registrado", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        
+
         rightPanel.add(registerBtn);
 
         // SECCIÓN: Social Login
@@ -206,7 +207,7 @@ public class Register extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new Login();
-                dispose();
+                SwingUtilities.invokeLater(Register.this::dispose);
             }
 
             @Override
@@ -229,16 +230,20 @@ public class Register extends JFrame {
         container.add(rightPanel);
         background.add(container);
         add(background);
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(this);
 
+        WindowPreserver.configurarVentana(this);
         setVisible(true);
     }
 
-
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Register::new);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new Register();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error: " + e.toString());
+            }
+        });
     }
 }
 
@@ -246,6 +251,7 @@ public class Register extends JFrame {
 // Checkbox personalizado para términos y condiciones
 // ─────────────────────────────────────────────────────────────────────────────
 class CheckboxTerms extends JPanel {
+
     private boolean checked = false;
     private final int BOX_SIZE = 18;
 
@@ -304,8 +310,8 @@ class CheckboxTerms extends JPanel {
         if (checked) {
             g2.setColor(Color.WHITE);
             g2.setStroke(new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            int[] xPoints = { x + 3, x + 7, x + BOX_SIZE - 3 };
-            int[] yPoints = { y + BOX_SIZE / 2, y + BOX_SIZE - 4, y + 4 };
+            int[] xPoints = {x + 3, x + 7, x + BOX_SIZE - 3};
+            int[] yPoints = {y + BOX_SIZE / 2, y + BOX_SIZE - 4, y + 4};
             g2.drawPolyline(xPoints, yPoints, 3);
         }
 

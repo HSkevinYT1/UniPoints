@@ -49,7 +49,7 @@ public class JuegoCarrera extends JFrame {
 
         // Configuración de la Ventana Principal
         setTitle("Unab Points - Carreras de Caballos");
-        setSize(1000, 550);
+        setSize(1300, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
@@ -66,8 +66,6 @@ public class JuegoCarrera extends JFrame {
 
         // 4. PANEL DERECHO (CÓMO JUGAR)
         add(crearPanelComoJugar(), BorderLayout.EAST);
-
-        // Preservar tamaño/maximizado
         WindowPreserver.configurarVentana(this);
     }
 

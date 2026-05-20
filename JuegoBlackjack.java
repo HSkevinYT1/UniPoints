@@ -51,7 +51,7 @@ public class JuegoBlackjack extends JFrame {
         }
 
         setTitle("Unab Points - Blackjack");
-        setSize(1050, 620);
+        setSize(1300, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
@@ -64,8 +64,6 @@ public class JuegoBlackjack extends JFrame {
 
         crearNuevoMazo();
         actualizarEstadoControles();
-
-        // Preservar tamaño/maximizado
         WindowPreserver.configurarVentana(this);
     }
 

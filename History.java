@@ -22,12 +22,9 @@ public class History extends JFrame {
 
         public History() {
                 setTitle("Actividad reciente");
-                setSize(900, 600); // Tamaño un poco más amplio para que quepa bien el header y contenido
+                setSize(1300, 850);
                 setLocationRelativeTo(null);
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                // Preservar tamaño/maximizado
-                WindowPreserver.configurarVentana(this);
 
 
                 // PANEL PRINCIPAL
@@ -84,6 +81,7 @@ public class History extends JFrame {
                 panelPrincipal.add(scroll, BorderLayout.CENTER);
 
                 add(panelPrincipal);
+                WindowPreserver.configurarVentana(this);
                 setVisible(true);
         }
 

@@ -63,13 +63,10 @@ public class Chat extends JFrame {
         initData();
         buildUI();
         setTitle("Mensajes");
-        setSize(1100, 700);
+        setSize(1300, 850);
         setMinimumSize(new Dimension(800, 500));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(this);
 
 
         // dejar de seleccionar contacto al dar click fuera
@@ -86,6 +83,7 @@ public class Chat extends JFrame {
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
 
+        WindowPreserver.configurarVentana(this);
         setVisible(true);
     }
 

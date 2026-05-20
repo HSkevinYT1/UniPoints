@@ -7,22 +7,38 @@ public class Ranking extends JFrame {
     public Ranking() {
 
         setTitle("Top Jugadores");
-        setSize(1000, 700);
+        setSize(1300, 850);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // PANEL PRINCIPAL
         JPanel panelPrincipal = new JPanel();
         panelPrincipal.setBackground(new Color(11, 15, 20));
         panelPrincipal.setLayout(new BorderLayout());
 
-        // TITULO
+        // HEADER PANEL (Atrás + Título)
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        headerPanel.setOpaque(false);
+
+        JButton btnVolver = new JButton("← Volver");
+        btnVolver.setBackground(new Color(18, 24, 33));
+        btnVolver.setForeground(Color.WHITE);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setFont(new Font("Arial", Font.BOLD, 16));
+        btnVolver.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVolver.addActionListener(e -> {
+            new MainMenu();
+            Ranking.this.dispose();
+        });
+        headerPanel.add(btnVolver);
+
         JLabel titulo = new JLabel("🏆 Ranking Global");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Arial", Font.BOLD, 32));
-        titulo.setBorder(new EmptyBorder(20, 25, 20, 25));
+        headerPanel.add(titulo);
 
-        panelPrincipal.add(titulo, BorderLayout.NORTH);
+        panelPrincipal.add(headerPanel, BorderLayout.NORTH);
 
         // CONTENIDO
         JPanel contenido = new JPanel();
@@ -83,8 +99,8 @@ public class Ranking extends JFrame {
 
         add(panelPrincipal);
 
-        // Preservar tamaño/maximizado
         WindowPreserver.configurarVentana(this);
+        setVisible(true);
     }
 
 

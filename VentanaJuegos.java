@@ -14,11 +14,7 @@ public class VentanaJuegos {
         ventana.setTitle("Unab Points");
         ventana.setSize(1300, 850);
         ventana.setLocationRelativeTo(null);
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cambiado a EXIT para cerrar todo
-
-        // Preservar tamaño/maximizado
-        WindowPreserver.configurarVentana(ventana);
-
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel contenedorPrincipal = new JPanel(new BorderLayout());
         contenedorPrincipal.setBackground(new Color(13, 13, 13));
@@ -31,6 +27,7 @@ public class VentanaJuegos {
         contenedorPrincipal.add(scroll, BorderLayout.CENTER);
 
         ventana.add(contenedorPrincipal);
+        WindowPreserver.configurarVentana(ventana);
         ventana.setVisible(true);
     }
 
