@@ -350,7 +350,9 @@ public class VentanaJuegos {
 
         // 3. Penales
         rejillaJuegos.add(crearCardJuego("Penales","Icons/GolGame.png", new Color(26, 60, 169), e -> {
-            /* [REDIRECCIÓN JUEGO PENALES] */
+            JuegoPenales penales = new JuegoPenales();
+            penales.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 4. Lucky Spin
