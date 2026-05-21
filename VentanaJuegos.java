@@ -331,8 +331,6 @@ public class VentanaJuegos {
         JPanel rejillaJuegos = new JPanel(new GridLayout(2, 4, 20, 20));
         rejillaJuegos.setOpaque(false);
 
-        // AÑADIMOS LOS JUEGOS
-        // -----------------------------------------------------------------------------------------
         // 1. Carreras
         rejillaJuegos.add(crearCardJuego("Carreras","Icons/RaceGame.png", new Color(44, 243, 53), e -> {
             /* [REDIFRECCIÓN JUEGO CARRERAS] */
@@ -357,12 +355,16 @@ public class VentanaJuegos {
 
         // 4. Lucky Spin
         rejillaJuegos.add(crearCardJuego("Lucky Spin","Icons/LuckySpinGame.png", new Color(161, 7, 9), e -> {
-            /* [REDIRECCIÓN LUCKY SPIN] */
+            JuegoLuckySpin penales = new JuegoLuckySpin();
+            penales.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 5. Dados
         rejillaJuegos.add(crearCardJuego("Dados","Icons/DiceGame.png", new Color(245, 192, 10), e -> {
-            /* [REDIRECCIÓN DADOS] */
+            JuegoDados penales = new JuegoDados();
+            penales.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 6. Aviator
@@ -374,7 +376,9 @@ public class VentanaJuegos {
 
         // 7. Ruleta
         rejillaJuegos.add(crearCardJuego("Ruleta","Icons/RouletteGame.png", new Color(255, 46, 126), e -> {
-            /* [REDIRECCIÓN RULETA] */
+            JuegoRuleta penales = new JuegoRuleta();
+            penales.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 8. Blackjack
