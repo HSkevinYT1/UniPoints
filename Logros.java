@@ -14,7 +14,6 @@ public class Logros {
 
     private static JLabel pointsLbl;
 
-    // Clase interna para el manejo de logros (usada por GestorLogros)
     public static class Logro {
         private String descripcion;
         private int recompensaMonedas;
@@ -55,8 +54,7 @@ public class Logros {
 
     // Cambiado a un JFrame dinámico e independiente
     public static void mostrarVentanaLogros() {
-        // 1. Instanciamos el JFrame tradicional para forzar la aparición en la barra de
-        // tareas
+
         JFrame ventana = new JFrame();
         ventana.setTitle("Perfil de Usuario");
         ventana.setSize(1300, 850);
@@ -105,30 +103,19 @@ public class Logros {
 
         List<Logro> listaLogros = GestorLogros.getInstancia().getListaLogros();
 
-        // --- CONTENEDOR PRINCIPAL FLUIDO ---
         JPanel contenedorPrincipal = new JPanel(new BorderLayout());
         contenedorPrincipal.setBackground(COLOR_FONDO_PRINCIPAL);
 
-        // AGREGAR HEADER SUPERIOR CONSISTENTE
         contenedorPrincipal.add(buildHeader(ventana), BorderLayout.NORTH);
 
-        // CONTENEDOR CONTENIDO CON PADDING
         JPanel panelContenido = new JPanel(new BorderLayout(25, 20));
         panelContenido.setBackground(COLOR_FONDO_PRINCIPAL);
         panelContenido.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
         contenedorPrincipal.add(panelContenido, BorderLayout.CENTER);
 
-        // ==========================================
-        // SECCIÓN CENTRAL: CUERPO DIVIDIDO EN DOS (LOGROS | ESTADÍSTICAS)
-        // ==========================================
-        // Usamos un Grid con 1 fila y 2 columnas distribuidas proporcionalmente (50% y
-        // 50%)
-        // Esto permite que al estirar la ventana, ambos paneles se expandan
-        // proporcionalmente.
         JPanel panelCuerpoCajas = new JPanel(new GridLayout(1, 2, 40, 0));
         panelCuerpoCajas.setOpaque(false);
 
-        // PANEL IZQUIERDO: CONTENEDOR LOGROS
         JPanel panelIzquierdo = new JPanel(new BorderLayout(0, 15));
         panelIzquierdo.setOpaque(false);
 

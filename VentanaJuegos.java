@@ -367,7 +367,9 @@ public class VentanaJuegos {
 
         // 6. Aviator
         rejillaJuegos.add(crearCardJuego("Aviator","Icons/AviatorGame.png", new Color(7, 176, 188), e -> {
-            /* [REDIRECCIÓN AVIATOR] */
+            JuegoAviator segundaVentana = new JuegoAviator();
+            segundaVentana.setVisible(true);
+            SwingUtilities.getWindowAncestor((Component)e.getSource()).dispose();
         }));
 
         // 7. Ruleta
