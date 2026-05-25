@@ -23,9 +23,9 @@ public class SocialButton extends JButton {
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         try {
-            ImageIcon rawIcon = new ImageIcon(iconPath);
+            ImageIcon rawIcon = ImageLoader.load(iconPath);
             Image scaled = rawIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-            this.icon = new ImageIcon(scaled);
+            this.icon = ImageLoader.load(scaled);
         } catch (Exception e) {
             System.err.println("No se pudo cargar el icono: " + iconPath);
         }

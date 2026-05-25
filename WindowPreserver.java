@@ -35,9 +35,9 @@ public class WindowPreserver {
 
         // Establecer el icono de la aplicación
         try {
-            File iconFile = new File("Icons/IconPlaceHolder.png");
-            if (iconFile.exists()) {
-                nuevaVentana.setIconImage(new ImageIcon(iconFile.getAbsolutePath()).getImage());
+            ImageIcon appIcon = ImageLoader.load("Icons/IconPlaceHolder.png");
+            if (appIcon != null && appIcon.getImage() != null) {
+                nuevaVentana.setIconImage(appIcon.getImage());
             }
         } catch (Exception e) {
             // ignorar fallas al cargar el icono

@@ -1,6 +1,12 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Logros {
@@ -8,11 +14,82 @@ public class Logros {
     // Paleta de Colores
     private static final Color COLOR_FONDO_PRINCIPAL = new Color(11, 14, 20);
     private static final Color COLOR_FONDO_PANEL = new Color(22, 26, 35);
-    private static final Color COLOR_VERDE_ACENTO = new Color(0, 230, 42);
+    private static final Color COLOR_ITEM_FONDO = new Color(30, 36, 48);
+    private static final Color COLOR_VERDE_ACENTO = new Color(44, 243, 53);
     private static final Color COLOR_TEXTO = Color.WHITE;
     private static final Color COLOR_TEXTO_MUTED = new Color(138, 143, 153);
 
     private static JLabel pointsLbl;
+
+    private static class RoundedPanel extends JPanel {
+        private int radius;
+        private Color bgColor;
+
+        public RoundedPanel(int radius, Color bgColor) {
+            this.radius = radius;
+            this.bgColor = bgColor;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(bgColor);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+            g2.dispose();
+        }
+    }
+
+    private static class ScrollablePanel extends JPanel implements Scrollable {
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 16;
+        }
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return visibleRect.height;
+        }
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
+    }
+
+    private static class RoundedButton extends JButton {
+        private int radius;
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+            g2.setColor(getForeground());
+            FontMetrics fm = g2.getFontMetrics();
+            g2.setFont(getFont());
+            g2.drawString(getText(), (getWidth() - fm.stringWidth(getText())) / 2, 
+                (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
+            g2.dispose();
+        }
+    }
 
     public static class Logro {
         private String descripcion;
@@ -63,7 +140,6 @@ public class Logros {
 
         ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-
         // --- VARIABLES PARAMETRIZADAS DEL USUARIO ---
         String nombreUsuario = "Invitado";
         int numeroMonedas = 500;
@@ -82,9 +158,9 @@ public class Logros {
             String rutaFoto = actual.getFotoPerfil();
             if (rutaFoto != null && !rutaFoto.isEmpty()) {
                 try {
-                    ImageIcon tempIcon = new ImageIcon(rutaFoto);
+                    ImageIcon tempIcon = ImageLoader.load(rutaFoto);
                     Image img = tempIcon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-                    fotoUsuario = new ImageIcon(img);
+                    fotoUsuario = ImageLoader.load(img);
                 } catch (Exception e) {
                     System.err.println("Error al cargar la foto de perfil en logros: " + e.getMessage());
                 }
@@ -110,72 +186,61 @@ public class Logros {
 
         JPanel panelContenido = new JPanel(new BorderLayout(25, 20));
         panelContenido.setBackground(COLOR_FONDO_PRINCIPAL);
-        panelContenido.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
+        panelContenido.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         contenedorPrincipal.add(panelContenido, BorderLayout.CENTER);
 
         JPanel panelCuerpoCajas = new JPanel(new GridLayout(1, 2, 40, 0));
         panelCuerpoCajas.setOpaque(false);
 
-        JPanel panelIzquierdo = new JPanel(new BorderLayout(0, 15));
-        panelIzquierdo.setOpaque(false);
+        // PANEL IZQUIERDO: LOGROS
+        RoundedPanel panelIzquierdo = new RoundedPanel(20, COLOR_FONDO_PANEL);
+        panelIzquierdo.setLayout(new BorderLayout(0, 20));
+        panelIzquierdo.setBorder(BorderFactory.createEmptyBorder(30, 35, 30, 35));
 
-        JLabel lblTituloLogros = new JLabel("Logros", SwingConstants.CENTER);
-        lblTituloLogros.setFont(new Font("Arial", Font.BOLD, 15));
+        JLabel lblTituloLogros = new JLabel("🌟 Mis Logros");
+        lblTituloLogros.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblTituloLogros.setForeground(COLOR_TEXTO);
-        lblTituloLogros.setBackground(COLOR_VERDE_ACENTO);
-        lblTituloLogros.setOpaque(true);
-        lblTituloLogros.setPreferredSize(new Dimension(380, 40));
         panelIzquierdo.add(lblTituloLogros, BorderLayout.NORTH);
 
-        // Subcontenedor elástico para meter las filas de logros
-        JPanel panelFilasContenedor = new JPanel();
+        JPanel panelFilasContenedor = new ScrollablePanel();
         panelFilasContenedor.setLayout(new BoxLayout(panelFilasContenedor, BoxLayout.Y_AXIS));
         panelFilasContenedor.setOpaque(false);
 
         for (Logro logro : listaLogros) {
-            // Cada logro usa BorderLayout para que la descripción cubra todo lo ancho
-            // dinámicamente
-            JPanel panelFilaLogro = new JPanel(new BorderLayout(5, 5));
-            panelFilaLogro.setOpaque(false);
-            panelFilaLogro.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65)); // Forzar expansión a lo ancho
+            RoundedPanel panelFilaLogro = new RoundedPanel(15, COLOR_ITEM_FONDO);
+            panelFilaLogro.setLayout(new BorderLayout(15, 0));
+            panelFilaLogro.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+            panelFilaLogro.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
 
-            JLabel lblDesc = new JLabel(logro.getDescripcion(), SwingConstants.CENTER);
+            JLabel lblDesc = new JLabel("<html><div style='width:100%;'><b>" + logro.getDescripcion() + "</b><br><font color='#8A8F99'>Recompensa: " + logro.getRecompensaMonedas() + " UP</font></div></html>");
             lblDesc.setForeground(COLOR_TEXTO);
-            lblDesc.setFont(new Font("Arial", Font.PLAIN, 12));
-            lblDesc.setOpaque(true);
-            lblDesc.setBackground(COLOR_FONDO_PANEL);
-            lblDesc.setBorder(BorderFactory.createLineBorder(COLOR_TEXTO_MUTED, 1, true));
-            lblDesc.setPreferredSize(new Dimension(100, 28));
+            lblDesc.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-            JPanel panelControlesLogro = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            JPanel panelControlesLogro = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
             panelControlesLogro.setOpaque(false);
 
-            JButton btnReclamar = new JButton();
-            btnReclamar.setFont(new Font("Arial", Font.BOLD, 11));
-            btnReclamar.setFocusPainted(false);
-            btnReclamar.setPreferredSize(new Dimension(110, 22));
+            RoundedButton btnReclamar = new RoundedButton("", 12);
+            btnReclamar.setFont(new Font("SansSerif", Font.BOLD, 12));
+            btnReclamar.setPreferredSize(new Dimension(110, 32));
 
             JLabel lblRegalo = new JLabel("🎁");
-            lblRegalo.setFont(new Font("Arial", Font.PLAIN, 16));
+            lblRegalo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
 
             if (logro.isReclamado()) {
                 btnReclamar.setText("Reclamado");
                 btnReclamar.setBackground(COLOR_FONDO_PANEL);
                 btnReclamar.setForeground(COLOR_TEXTO_MUTED);
                 btnReclamar.setEnabled(false);
-                lblRegalo.setForeground(COLOR_TEXTO_MUTED);
             } else if (logro.isCompletado()) {
-                btnReclamar.setText("Completado");
+                btnReclamar.setText("Reclamar");
                 btnReclamar.setBackground(COLOR_VERDE_ACENTO);
                 btnReclamar.setForeground(COLOR_FONDO_PRINCIPAL);
                 btnReclamar.setEnabled(true);
-                lblRegalo.setForeground(COLOR_VERDE_ACENTO);
             } else {
                 btnReclamar.setText("Por completar");
-                btnReclamar.setBackground(COLOR_FONDO_PANEL);
+                btnReclamar.setBackground(new Color(40, 45, 55));
                 btnReclamar.setForeground(COLOR_TEXTO_MUTED);
                 btnReclamar.setEnabled(false);
-                lblRegalo.setForeground(COLOR_TEXTO_MUTED);
             }
 
             btnReclamar.addActionListener(e -> {
@@ -184,7 +249,6 @@ public class Logros {
                 btnReclamar.setText("Reclamado");
                 btnReclamar.setBackground(COLOR_FONDO_PANEL);
                 btnReclamar.setForeground(COLOR_TEXTO_MUTED);
-                lblRegalo.setForeground(COLOR_TEXTO_MUTED);
 
                 int recompensa = logro.getRecompensaMonedas();
                 Usuario actualUser = Usuario.getUsuarioActual();
@@ -201,39 +265,105 @@ public class Logros {
                         JOptionPane.INFORMATION_MESSAGE);
             });
 
-            panelControlesLogro.add(btnReclamar);
-            panelControlesLogro.add(lblRegalo);
+            JPanel btnWrapper = new JPanel(new GridBagLayout());
+            btnWrapper.setOpaque(false);
+            btnWrapper.add(lblRegalo);
+            btnWrapper.add(Box.createHorizontalStrut(12));
+            btnWrapper.add(btnReclamar);
 
-            panelFilaLogro.add(lblDesc, BorderLayout.NORTH);
-            panelFilaLogro.add(panelControlesLogro, BorderLayout.CENTER);
+            panelFilaLogro.add(lblDesc, BorderLayout.CENTER);
+            panelFilaLogro.add(btnWrapper, BorderLayout.EAST);
 
             panelFilasContenedor.add(panelFilaLogro);
-            panelFilasContenedor.add(Box.createVerticalStrut(8));
+            panelFilasContenedor.add(Box.createVerticalStrut(12));
         }
 
-        // Agregamos un JScrollPane invisible por si la resolución es baja o se achica
-        // demasiado verticalmente
         JScrollPane scrollLogros = new JScrollPane(panelFilasContenedor);
         scrollLogros.setBorder(null);
         scrollLogros.setOpaque(false);
         scrollLogros.getViewport().setOpaque(false);
+        scrollLogros.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollLogros.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(60, 65, 75);
+                this.trackColor = COLOR_FONDO_PANEL;
+            }
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0, 0));
+                button.setMinimumSize(new Dimension(0, 0));
+                button.setMaximumSize(new Dimension(0, 0));
+                return button;
+            }
+        });
+        scrollLogros.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0));
+
         panelIzquierdo.add(scrollLogros, BorderLayout.CENTER);
 
         // PANEL DERECHO: CONTENEDOR ESTADÍSTICAS
-        JPanel panelEstadisticas = new JPanel();
-        panelEstadisticas.setLayout(new BoxLayout(panelEstadisticas, BoxLayout.Y_AXIS));
-        panelEstadisticas.setBackground(COLOR_FONDO_PANEL);
-        panelEstadisticas.setBorder(BorderFactory.createEmptyBorder(35, 30, 35, 30));
+        RoundedPanel panelEstadisticas = new RoundedPanel(20, COLOR_FONDO_PANEL);
+        panelEstadisticas.setLayout(new BorderLayout(0, 20));
+        panelEstadisticas.setBorder(BorderFactory.createEmptyBorder(30, 35, 30, 35));
 
-        panelEstadisticas.add(crearFilaMetrica("Partidas jugadas:", String.valueOf(partidasJugadas)));
-        panelEstadisticas.add(Box.createVerticalStrut(35));
-        panelEstadisticas.add(crearFilaMetrica("Victorias:", String.valueOf(victorias)));
-        panelEstadisticas.add(Box.createVerticalStrut(35));
-        panelEstadisticas.add(crearFilaMetrica("Derrotas:", String.valueOf(derrotas)));
-        panelEstadisticas.add(Box.createVerticalStrut(35));
-        panelEstadisticas.add(crearFilaMetrica("Porcentaje V/D:", porcentajeVD));
+        JLabel lblTituloStats = new JLabel("📊 Estadísticas");
+        lblTituloStats.setFont(new Font("SansSerif", Font.BOLD, 24));
+        lblTituloStats.setForeground(COLOR_TEXTO);
+        panelEstadisticas.add(lblTituloStats, BorderLayout.NORTH);
 
-        // Metemos ambas secciones en la cuadrícula fluida
+        JPanel statsContenedor = new JPanel();
+        statsContenedor.setLayout(new BoxLayout(statsContenedor, BoxLayout.Y_AXIS));
+        statsContenedor.setOpaque(false);
+
+        statsContenedor.add(crearFilaMetrica("Partidas jugadas", String.valueOf(partidasJugadas), "🎮"));
+        statsContenedor.add(Box.createVerticalStrut(15));
+        statsContenedor.add(crearFilaMetrica("Victorias", String.valueOf(victorias), "🏆"));
+        statsContenedor.add(Box.createVerticalStrut(15));
+        statsContenedor.add(crearFilaMetrica("Derrotas", String.valueOf(derrotas), "💀"));
+        statsContenedor.add(Box.createVerticalStrut(15));
+        statsContenedor.add(crearFilaMetrica("Porcentaje V/D", porcentajeVD, "📈"));
+        statsContenedor.add(Box.createVerticalStrut(15));
+        statsContenedor.add(crearFilaMetrica("Saldo actual", String.format("%,.0f UP", (double) numeroMonedas), "💰"));
+
+        panelEstadisticas.add(statsContenedor, BorderLayout.CENTER);
+
+        // ─── BOTÓN EXPORTAR ──────────────────────────────────────────
+        // Variables final para capturar en el lambda
+        final String fNombreUsuario    = nombreUsuario;
+        final String fUsername         = (actual != null) ? actual.getUsername() : "?";
+        final String fCorreo           = (actual != null) ? actual.getCorreo()   : "?";
+        final int    fPartidas         = partidasJugadas;
+        final int    fVictorias        = victorias;
+        final int    fDerrotas         = derrotas;
+        final String fPorcentaje       = porcentajeVD;
+        final int    fMonedas          = numeroMonedas;
+
+        RoundedButton btnExportar = new RoundedButton("📄 Exportar Resumen", 15);
+        btnExportar.setBackground(new Color(30, 36, 48));
+        btnExportar.setForeground(new Color(44, 243, 53));
+        btnExportar.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnExportar.setPreferredSize(new Dimension(220, 42));
+        btnExportar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        btnExportar.addActionListener(ev -> exportarResumen(ventana, listaLogros,
+                fNombreUsuario, fUsername, fCorreo,
+                fPartidas, fVictorias, fDerrotas, fPorcentaje, fMonedas));
+
+
+        JPanel btnExportarWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        btnExportarWrapper.setOpaque(false);
+        btnExportarWrapper.setBorder(BorderFactory.createEmptyBorder(18, 0, 0, 0));
+        btnExportarWrapper.add(btnExportar);
+
+        panelEstadisticas.add(btnExportarWrapper, BorderLayout.SOUTH);
+
         panelCuerpoCajas.add(panelIzquierdo);
         panelCuerpoCajas.add(panelEstadisticas);
 
@@ -246,21 +376,99 @@ public class Logros {
         ventana.setVisible(true);
     }
 
-    private static JPanel crearFilaMetrica(String titulo, String valor) {
-        JPanel fila = new JPanel(new BorderLayout());
-        fila.setOpaque(false);
-        fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30)); // Escala horizontal infinita
+    // ─── EXPORTAR RESUMEN ──────────────────────────────────────────
+    private static void exportarResumen(JFrame padre, List<Logros.Logro> logros,
+            String nombre, String username, String correo,
+            int partidas, int victorias, int derrotas, String porcentaje, int saldo) {
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Guardar Resumen de Logros");
+        chooser.setSelectedFile(new java.io.File("Resumen_" + username + ".txt"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Archivo de texto (.txt)", "txt"));
+
+        int result = chooser.showSaveDialog(padre);
+        if (result != JFileChooser.APPROVE_OPTION) return;
+
+        java.io.File archivo = chooser.getSelectedFile();
+        if (!archivo.getName().toLowerCase().endsWith(".txt")) {
+            archivo = new java.io.File(archivo.getAbsolutePath() + ".txt");
+        }
+
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
+            pw.println("╔══════════════════════════════════════════════╗");
+            pw.println("║          UNIPOINTS — RESUMEN DE LOGROS       ║");
+            pw.println("╚══════════════════════════════════════════════╝");
+            pw.println();
+            pw.println("Generado el: " + fecha);
+            pw.println();
+            pw.println("── PERFIL ──────────────────────────────────────");
+            pw.println("  Nombre:   " + nombre);
+            pw.println("  Usuario:  @" + username);
+            pw.println("  Correo:   " + correo);
+            pw.println("  Saldo:    " + String.format("%,.0f UP", (double) saldo));
+            pw.println();
+            pw.println("── ESTADÍSTICAS ────────────────────────────────");
+            pw.println("  Partidas jugadas:  " + partidas);
+            pw.println("  Victorias:         " + victorias);
+            pw.println("  Derrotas:          " + derrotas);
+            pw.println("  Porcentaje V/D:    " + porcentaje);
+            pw.println();
+            pw.println("── LOGROS ──────────────────────────────────────");
+            int completados = 0;
+            for (int i = 0; i < logros.size(); i++) {
+                Logros.Logro l = logros.get(i);
+                String estado;
+                if (l.isReclamado())      estado = "[RECLAMADO ✓]";
+                else if (l.isCompletado()) estado = "[COMPLETADO — sin reclamar]";
+                else                       estado = "[PENDIENTE]";
+                if (l.isCompletado() || l.isReclamado()) completados++;
+                pw.printf("  %d. %-45s %s (+%d UP)%n",
+                        i + 1, l.getDescripcion(), estado, l.getRecompensaMonedas());
+            }
+            pw.println();
+            pw.println("  Completados: " + completados + " / " + logros.size());
+            pw.println();
+            pw.println("════════════════════════════════════════════════");
+            pw.println("  UniPoints — Universidad Andrés Bello");
+
+            JOptionPane.showMessageDialog(padre,
+                    "✅ Resumen exportado exitosamente en:\n" + archivo.getAbsolutePath(),
+                    "Exportación completada", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(padre,
+                    "Error al guardar el archivo:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static JPanel crearFilaMetrica(String titulo, String valor, String icono) {
+        RoundedPanel fila = new RoundedPanel(15, COLOR_ITEM_FONDO);
+        fila.setLayout(new BorderLayout(15, 0));
+        fila.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
+        fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+
+        JPanel panelIzquierdo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        panelIzquierdo.setOpaque(false);
+
+        JLabel lblIcono = new JLabel(icono);
+        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
 
         JLabel lblTitulo = new JLabel(titulo);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 15));
-        lblTitulo.setForeground(COLOR_VERDE_ACENTO);
+        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 15));
+        lblTitulo.setForeground(COLOR_TEXTO_MUTED);
+
+        panelIzquierdo.add(lblIcono);
+        panelIzquierdo.add(lblTitulo);
 
         JLabel lblValor = new JLabel(valor, SwingConstants.RIGHT);
-        lblValor.setFont(new Font("Arial", Font.BOLD, 15));
+        lblValor.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblValor.setForeground(COLOR_TEXTO);
 
-        fila.add(lblTitulo, BorderLayout.WEST);
-        fila.add(lblValor, BorderLayout.CENTER);
+        fila.add(panelIzquierdo, BorderLayout.WEST);
+        fila.add(lblValor, BorderLayout.EAST);
         return fila;
     }
 
@@ -369,13 +577,14 @@ public class Logros {
                     String fotoPath = (Usuario.getUsuarioActual() != null)
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
 
                     // Clip circular
                     Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(icon.getImage(), 2, 2, 38, 38, null);
                     g2.setClip(null);
 
                     // Borde verde online premium
@@ -383,6 +592,7 @@ public class Logros {
                     g2.setStroke(new BasicStroke(1.5f));
                     g2.drawOval(2, 2, 37, 37);
                 } catch (Exception e) {
+                    g2.setClip(null);
                     g2.setColor(new Color(40, 50, 38));
                     g2.fillOval(2, 2, 38, 38);
                 }
@@ -515,7 +725,7 @@ public class Logros {
         g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
                 (size + fm.getAscent() - fm.getDescent()) / 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     private static JPanel makeBellWithBadge(int count) {

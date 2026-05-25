@@ -11,11 +11,11 @@ public class FeatureIcon extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         try {
-            ImageIcon rawIcon = new ImageIcon(iconPath);
+            ImageIcon rawIcon = ImageLoader.load(iconPath);
             // El escudo suele verse más grande, así que le damos un tamaño menor que a los otros
             int size = iconPath.contains("shield") ? 40 : 48;
             Image scaled = rawIcon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
-            JLabel iconLabel = new JLabel(new ImageIcon(scaled));
+            JLabel iconLabel = new JLabel(ImageLoader.load(scaled));
             iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(iconLabel);
         } catch (Exception e) {

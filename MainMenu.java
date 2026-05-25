@@ -1,10 +1,11 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class MainMenu extends JFrame {
 
@@ -37,7 +38,7 @@ public class MainMenu extends JFrame {
     private GridLayout gridLayout;
     private JPanel headerPanel;
     private JPanel rightPanel;
-    
+
     // Lista de tarjetas para escala dinámica
     private List<MenuCardPanel> cardsList = new ArrayList<>();
     private JPanel bellPanel;
@@ -68,17 +69,17 @@ public class MainMenu extends JFrame {
                 RadialGradientPaint glow = new RadialGradientPaint(
                         new Point2D.Float(getWidth() / 2f, getHeight() / 2.5f),
                         400f * currentScale,
-                        new float[] { 0f, 0.4f, 1f },
-                        new Color[] {
-                                new Color(20, 80, 20, 60),
-                                new Color(15, 50, 15, 25),
-                                new Color(0, 0, 0, 0)
+                        new float[]{0f, 0.4f, 1f},
+                        new Color[]{
+                            new Color(20, 80, 20, 60),
+                            new Color(15, 50, 15, 25),
+                            new Color(0, 0, 0, 0)
                         });
                 g2.setPaint(glow);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
                 // Texto "UP" fantasma en el fondo
-                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(200 * currentScale)));
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int) (200 * currentScale)));
                 g2.setColor(new Color(30, 40, 28, 30));
                 FontMetrics fm = g2.getFontMetrics();
                 String watermark = "UP";
@@ -96,20 +97,20 @@ public class MainMenu extends JFrame {
         content = buildContent();
 
         root.add(headerPanel, BorderLayout.NORTH);
-        
+
         // Panel contenedor para la zona de contenido (Bienvenida arriba + Accesos centrados)
         JPanel mainAreaPanel = new JPanel(new BorderLayout());
         mainAreaPanel.setOpaque(false);
-        
+
         // Bienvenida arriba a la izquierda
         mainAreaPanel.add(welcomePanel, BorderLayout.NORTH);
-        
+
         // Accesos centrados perfectamente
         JPanel centerContainer = new JPanel(new GridBagLayout());
         centerContainer.setOpaque(false);
         centerContainer.add(content);
         mainAreaPanel.add(centerContainer, BorderLayout.CENTER);
-        
+
         root.add(mainAreaPanel, BorderLayout.CENTER);
 
         setContentPane(root);
@@ -123,37 +124,40 @@ public class MainMenu extends JFrame {
                 float scaleX = getWidth() / 1300f;
                 float scaleY = getHeight() / 850f;
                 currentScale = Math.min(scaleX, scaleY);
-                if (currentScale < 0.8f) currentScale = 0.8f;
-                if (currentScale > 1.6f) currentScale = 1.6f; // Límite para mantener la elegancia
-
+                if (currentScale < 0.8f) {
+                    currentScale = 0.8f;
+                }
+                if (currentScale > 1.6f) {
+                    currentScale = 1.6f; // Límite para mantener la elegancia
+                }
                 // Escalar etiquetas de bienvenida
                 if (welcomeLabel != null) {
-                    welcomeLabel.setFont(new Font("SansSerif", Font.BOLD, (int)(38 * currentScale)));
+                    welcomeLabel.setFont(new Font("SansSerif", Font.BOLD, (int) (38 * currentScale)));
                 }
                 if (subtitleLabel != null) {
-                    subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, (int)(17 * currentScale)));
+                    subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, (int) (17 * currentScale)));
                 }
 
                 // Escalar bordes y espaciados
                 if (welcomePanel != null) {
-                    welcomePanel.setBorder(new EmptyBorder((int)(10 * currentScale), (int)(60 * currentScale), 0, (int)(60 * currentScale)));
+                    welcomePanel.setBorder(new EmptyBorder((int) (10 * currentScale), (int) (60 * currentScale), 0, (int) (60 * currentScale)));
                 }
                 if (content != null) {
-                    content.setBorder(new EmptyBorder(0, (int)(60 * currentScale), (int)(40 * currentScale), (int)(60 * currentScale)));
+                    content.setBorder(new EmptyBorder(0, (int) (60 * currentScale), (int) (40 * currentScale), (int) (60 * currentScale)));
                 }
                 if (gridLayout != null && gridPanel != null) {
-                    int gap = (int)(22 * currentScale);
+                    int gap = (int) (22 * currentScale);
                     gridLayout.setHgap(gap);
                     gridLayout.setVgap(gap);
-                    gridPanel.setMaximumSize(new Dimension((int)(1180 * currentScale), (int)(460 * currentScale)));
-                    gridPanel.setPreferredSize(new Dimension((int)(1180 * currentScale), (int)(460 * currentScale)));
+                    gridPanel.setMaximumSize(new Dimension((int) (1180 * currentScale), (int) (460 * currentScale)));
+                    gridPanel.setPreferredSize(new Dimension((int) (1180 * currentScale), (int) (460 * currentScale)));
                 }
                 if (headerPanel != null) {
-                    headerPanel.setBorder(new EmptyBorder((int)(18 * currentScale), (int)(30 * currentScale), (int)(12 * currentScale), (int)(30 * currentScale)));
+                    headerPanel.setBorder(new EmptyBorder((int) (18 * currentScale), (int) (30 * currentScale), (int) (12 * currentScale), (int) (30 * currentScale)));
                 }
                 if (rightPanel != null) {
                     FlowLayout fl = (FlowLayout) rightPanel.getLayout();
-                    fl.setHgap((int)(16 * currentScale));
+                    fl.setHgap((int) (16 * currentScale));
                 }
 
                 // Escalar individualmente cada tarjeta
@@ -183,7 +187,7 @@ public class MainMenu extends JFrame {
         JPanel saldoBadge = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension((int)(140 * currentScale), (int)(38 * currentScale));
+                return new Dimension((int) (140 * currentScale), (int) (38 * currentScale));
             }
 
             @Override
@@ -191,23 +195,23 @@ public class MainMenu extends JFrame {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(25, 30, 22));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int)(20 * currentScale), (int)(20 * currentScale));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int) (20 * currentScale), (int) (20 * currentScale));
                 g2.setColor(new Color(50, 65, 45));
                 g2.setStroke(new BasicStroke(1.2f * currentScale));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int)(20 * currentScale), (int)(20 * currentScale));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int) (20 * currentScale), (int) (20 * currentScale));
 
                 // Círculo UP pequeño
                 g2.setColor(new Color(200, 170, 50));
-                g2.fillOval((int)(8 * currentScale), (int)(7 * currentScale), (int)(24 * currentScale), (int)(24 * currentScale));
+                g2.fillOval((int) (8 * currentScale), (int) (7 * currentScale), (int) (24 * currentScale), (int) (24 * currentScale));
                 g2.setColor(new Color(30, 25, 10));
-                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(10 * currentScale)));
-                g2.drawString("UP", (int)(13 * currentScale), (int)(23 * currentScale));
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int) (10 * currentScale)));
+                g2.drawString("UP", (int) (13 * currentScale), (int) (23 * currentScale));
 
                 // Texto saldo
                 g2.setColor(TEXT_PRIMARY);
-                g2.setFont(new Font("SansSerif", Font.BOLD, (int)(14 * currentScale)));
+                g2.setFont(new Font("SansSerif", Font.BOLD, (int) (14 * currentScale)));
                 String saldoText = String.format("%,.0f UP", saldo);
-                g2.drawString(saldoText, (int)(40 * currentScale), (int)(24 * currentScale));
+                g2.drawString(saldoText, (int) (40 * currentScale), (int) (24 * currentScale));
                 g2.dispose();
             }
         };
@@ -220,37 +224,30 @@ public class MainMenu extends JFrame {
         JPanel avatarPanel = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension((int)(42 * currentScale), (int)(42 * currentScale));
+                return new Dimension((int) (42 * currentScale), (int) (42 * currentScale));
             }
 
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Cargar foto de perfil
+                int avatarSize = (int) (38 * currentScale);
                 try {
-                    String fotoPath = (Usuario.getUsuarioActual() != null)
-                            ? Usuario.getUsuarioActual().getFotoPerfil()
-                            : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    int avatarSize = (int)(38 * currentScale);
-                    int offset = (int)(2 * currentScale);
-                    Image img = icon.getImage().getScaledInstance(avatarSize, avatarSize, Image.SCALE_SMOOTH);
-
-                    // Clip circular
-                    Shape clip = new Ellipse2D.Float(offset, offset, avatarSize, avatarSize);
+                    String fotoPath = (Usuario.getUsuarioActual() != null) ? Usuario.getUsuarioActual().getFotoPerfil() : "Icons/UserDefaultpfp.png";
+                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
+                    
+                    Shape clip = new Ellipse2D.Float(2, 2, avatarSize, avatarSize);
                     g2.setClip(clip);
-                    g2.drawImage(img, offset, offset, avatarSize, avatarSize, null);
+                    g2.drawImage(icon.getImage(), 2, 2, avatarSize, avatarSize, null);
                     g2.setClip(null);
-
-                    // Borde
-                    g2.setColor(new Color(60, 70, 55));
-                    g2.setStroke(new BasicStroke(1.5f * currentScale));
-                    g2.drawOval(offset, offset, avatarSize - 1, avatarSize - 1);
+                    
+                    g2.setColor(new Color(46, 204, 113));
+                    g2.setStroke(new BasicStroke(2f));
+                    g2.drawOval(2, 2, avatarSize - 1, avatarSize - 1);
                 } catch (Exception e) {
-                    int avatarSize = (int)(38 * currentScale);
-                    int offset = (int)(2 * currentScale);
+                    int offset = (int) (2 * currentScale);
                     g2.setColor(new Color(40, 50, 38));
                     g2.fillOval(offset, offset, avatarSize, avatarSize);
                 }
@@ -386,8 +383,14 @@ public class MainMenu extends JFrame {
             new Places();
             dispose();
         })));
-        gridPanel.add(addCardToList(new MenuCardPanel("Calculadora de notas", "bell", null)));
-        gridPanel.add(addCardToList(new MenuCardPanel("Perfil", "profile", null)));
+        gridPanel.add(addCardToList(new MenuCardPanel("Calculadora de notas", "bell", () -> {
+            new CalculadoraNotas();
+            dispose();
+        })));
+        gridPanel.add(addCardToList(new MenuCardPanel("Perfil", "profile", () -> {
+            Perfil.mostrarVentanaPerfil();
+            dispose();
+        })));
 
         mainContent.add(gridPanel);
 
@@ -401,6 +404,7 @@ public class MainMenu extends JFrame {
 
     // ─── CLASE INTERNA PARA TARJETAS DINÁMICAS ──────────────────────────────
     private class MenuCardPanel extends JPanel {
+
         private String title;
         private String iconType;
         private JLabel iconLabel;
@@ -447,9 +451,9 @@ public class MainMenu extends JFrame {
             String fileName = getIconPath(iconType);
             iconLabel = new JLabel();
             try {
-                ImageIcon icon = new ImageIcon(fileName);
+                ImageIcon icon = ImageLoader.load(fileName);
                 Image scaledImage = icon.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
-                iconLabel.setIcon(new ImageIcon(scaledImage));
+                iconLabel.setIcon(ImageLoader.load(scaledImage));
             } catch (Exception e) {
                 // fallback
             }
@@ -485,32 +489,43 @@ public class MainMenu extends JFrame {
 
         private String getIconPath(String type) {
             switch (type) {
-                case "chat": return "Icons/ChatAccess.png";
-                case "gamepad": return "Icons/MinigamesAccess.png";
-                case "trophy": return "Icons/RankingAccess.png";
-                case "clock": return "Icons/HistoryAccess.png";
-                case "medal": return "Icons/AchievementAccess.png";
-                case "coins": return "Icons/PlaceAccess.png";
-                case "bell": return "Icons/CalculatorAccess.png";
-                case "profile": return "Icons/ProfileAccess.png";
-                default: return "Icons/UserDefaultpfp.png";
+                case "chat":
+                    return "Icons/ChatAccess.png";
+                case "gamepad":
+                    return "Icons/MinigamesAccess.png";
+                case "trophy":
+                    return "Icons/RankingAccess.png";
+                case "clock":
+                    return "Icons/HistoryAccess.png";
+                case "medal":
+                    return "Icons/AchievementAccess.png";
+                case "coins":
+                    return "Icons/PlaceAccess.png";
+                case "bell":
+                    return "Icons/CalculatorAccess.png";
+                case "profile":
+                    return "Icons/ProfileAccess.png";
+                default:
+                    return "Icons/UserDefaultpfp.png";
             }
         }
 
         public void scaleCard(float scale) {
-            setBorder(new EmptyBorder((int)(30 * scale), (int)(20 * scale), (int)(20 * scale), (int)(20 * scale)));
-            titleLabel.setFont(new Font("SansSerif", Font.BOLD, (int)(15 * scale)));
-            arrowLabel.setFont(new Font("SansSerif", Font.PLAIN, (int)(16 * scale)));
-            titleLabel.setBorder(new EmptyBorder((int)(8 * scale), 0, (int)(4 * scale), 0));
+            setBorder(new EmptyBorder((int) (30 * scale), (int) (20 * scale), (int) (20 * scale), (int) (20 * scale)));
+            titleLabel.setFont(new Font("SansSerif", Font.BOLD, (int) (15 * scale)));
+            arrowLabel.setFont(new Font("SansSerif", Font.PLAIN, (int) (16 * scale)));
+            titleLabel.setBorder(new EmptyBorder((int) (8 * scale), 0, (int) (4 * scale), 0));
 
-            int iconSize = (int)(75 * scale);
-            if (iconSize < 30) iconSize = 30;
+            int iconSize = (int) (75 * scale);
+            if (iconSize < 30) {
+                iconSize = 30;
+            }
 
             try {
                 String fileName = getIconPath(iconType);
-                ImageIcon icon = new ImageIcon(fileName);
+                ImageIcon icon = ImageLoader.load(fileName);
                 Image scaledImage = icon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-                iconLabel.setIcon(new ImageIcon(scaledImage));
+                iconLabel.setIcon(ImageLoader.load(scaledImage));
             } catch (Exception e) {
                 // ignore
             }
@@ -524,7 +539,7 @@ public class MainMenu extends JFrame {
 
             // Fondo de la tarjeta
             g2.setColor(BG_CARD);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int)(20 * currentScale), (int)(20 * currentScale));
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), (int) (20 * currentScale), (int) (20 * currentScale));
 
             // Borde
             if (hovered) {
@@ -534,21 +549,20 @@ public class MainMenu extends JFrame {
                 g2.setColor(BORDER_CARD);
                 g2.setStroke(new BasicStroke(1.2f * currentScale));
             }
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int)(20 * currentScale), (int)(20 * currentScale));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int) (20 * currentScale), (int) (20 * currentScale));
 
             // Brillo inferior verde sutil cuando hover
             if (hovered) {
                 GradientPaint glowBottom = new GradientPaint(
-                        0, getHeight() - (int)(30 * currentScale), new Color(30, 120, 30, 40),
+                        0, getHeight() - (int) (30 * currentScale), new Color(30, 120, 30, 40),
                         0, getHeight(), new Color(30, 120, 30, 0));
                 g2.setPaint(glowBottom);
-                g2.fillRoundRect(0, getHeight() - (int)(30 * currentScale), getWidth(), (int)(30 * currentScale), (int)(20 * currentScale), (int)(20 * currentScale));
+                g2.fillRoundRect(0, getHeight() - (int) (30 * currentScale), getWidth(), (int) (30 * currentScale), (int) (20 * currentScale), (int) (20 * currentScale));
             }
 
             g2.dispose();
         }
     }
-
 
     // ─── MAIN ────────────────────────────────────────────────────────────────
     public static void main(String[] args) {

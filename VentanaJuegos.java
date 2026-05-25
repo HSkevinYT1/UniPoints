@@ -128,16 +128,14 @@ public class VentanaJuegos {
                     String fotoPath = (Usuario.getUsuarioActual() != null)
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
 
-                    // Clip circular
                     Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(icon.getImage(), 2, 2, 38, 38, null);
                     g2.setClip(null);
-
-                    // Borde verde online premium
                     g2.setColor(GREEN);
                     g2.setStroke(new BasicStroke(1.5f));
                     g2.drawOval(2, 2, 37, 37);
@@ -274,7 +272,7 @@ public class VentanaJuegos {
         g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
                 (size + fm.getAscent() - fm.getDescent()) / 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     private static JPanel makeBellWithBadge(int count) {
@@ -400,8 +398,8 @@ public class VentanaJuegos {
 
         // Área de la imagen (Centro)
         // [INDICACIÓN: AQUÍ DEBES PONER EL LLAMADO A LA IMAGEN SEGÚN EL TÍTULO]
-        // Ejemplo: JLabel imgLabel = new JLabel(new ImageIcon("img/" + titulo.toLowerCase() + ".png"));
-        JLabel lblImagen = new JLabel(new ImageIcon(new ImageIcon(rutaImg).getImage().getScaledInstance(308, 310, Image.SCALE_SMOOTH)));
+        // Ejemplo: JLabel imgLabel = new JLabel(ImageLoader.load("img/" + titulo.toLowerCase() + ".png"));
+        JLabel lblImagen = new JLabel(ImageLoader.load(ImageLoader.load(rutaImg).getImage().getScaledInstance(308, 310, Image.SCALE_SMOOTH)));
         lblImagen.setForeground(new Color(0, 0, 0, 100)); // Texto temporal
         card.add(lblImagen, BorderLayout.CENTER);
 

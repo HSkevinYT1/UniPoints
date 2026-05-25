@@ -499,11 +499,13 @@ public class CalculadoraNotas extends JFrame {
                     String fotoPath = (Usuario.getUsuarioActual() != null)
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
-                    Shape clip = new Ellipse2D.Float(2, 2, 38, 38);
+                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
+
+                    Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(icon.getImage(), 2, 2, 38, 38, null);
                     g2.setClip(null);
                     g2.setColor(GREEN);
                     g2.setStroke(new BasicStroke(1.5f));
@@ -549,7 +551,7 @@ public class CalculadoraNotas extends JFrame {
         FontMetrics fm = g2.getFontMetrics();
         g2.drawString("UP", (size - fm.stringWidth("UP")) / 2, (size + fm.getAscent() - fm.getDescent()) / 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // Representa una fila editable de evaluacion, nota, porcentaje y eliminar.

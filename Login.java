@@ -58,9 +58,9 @@ public class Login extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Logo principal
-        ImageIcon logoIcon = new ImageIcon("Icons/AppLogo.jpeg");
+        ImageIcon logoIcon = ImageLoader.load("Icons/AppLogo.jpeg");
         Image scaledLogo = logoIcon.getImage().getScaledInstance(400, -1, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
+        JLabel logoLabel = new JLabel(ImageLoader.load(scaledLogo), SwingConstants.CENTER);
 
         gbc.gridy = 0;
         centerContainer.add(logoLabel, gbc);
@@ -114,10 +114,10 @@ public class Login extends JFrame {
         rightPanel.add(userLabel);
 
         // Campo: Usuario (con icono)
-        ImageIcon userIcon = new ImageIcon("Icons/user.png");
+        ImageIcon userIcon = ImageLoader.load("Icons/user.png");
         Image scaledUser = userIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
         RoundedTextField userField = new RoundedTextField("Ingresa tu correo o usuario",
-                new ImageIcon(scaledUser));
+                ImageLoader.load(scaledUser));
         userField.setBounds(70, 170, 430, 55);
         rightPanel.add(userField);
 
@@ -129,10 +129,10 @@ public class Login extends JFrame {
         rightPanel.add(passLabel);
 
         // Campo: Contraseña (con icono)
-        ImageIcon lockIcon = new ImageIcon("Icons/lock.png");
+        ImageIcon lockIcon = ImageLoader.load("Icons/lock.png");
         Image scaledLock = lockIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
         RoundedPasswordField passField = new RoundedPasswordField("Ingresa tu contraseña",
-                new ImageIcon(scaledLock));
+                ImageLoader.load(scaledLock));
         passField.setBounds(70, 280, 430, 55);
         rightPanel.add(passField);
 

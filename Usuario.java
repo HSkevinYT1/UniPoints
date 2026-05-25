@@ -52,7 +52,7 @@ public class Usuario {
         this.victorias = 0;
         this.derrotas = 0;
         this.saldo = 1200; // saldo inicial premium de 1200 UP
-        this.banner = "Icons/default_banner.png"; // Default banner
+        this.banner = "Banners/Night_Banner.png"; // Default banner
         this.fotoPerfil = "Icons/user.png"; // Default profile picture
     }
 
@@ -170,11 +170,13 @@ public class Usuario {
     }
 
     public String getFotoPerfil() {
-        return fotoPerfil;
+        if (this.fotoPerfil == null || this.fotoPerfil.isEmpty()) {
+            return "Icons/UserDefaultpfp.png";
+        }
+        return this.fotoPerfil;
     }
 
     public void setFotoPerfil(String fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
     }
 }
-

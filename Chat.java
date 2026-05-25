@@ -1,6 +1,4 @@
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.plaf.basic.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -8,8 +6,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.plaf.basic.*;
 
 public class Chat extends JFrame {
+
     // COLORES
     static final Color BG_DARK = new Color(0x0D, 0x0D, 0x0D);
     static final Color BG_PANEL = new Color(0x12, 0x12, 0x12);
@@ -49,14 +51,14 @@ public class Chat extends JFrame {
     private JLabel headerStatusLabel;
     private JPanel contactListPanel;
     private JTextField searchField;
-    private boolean[] searchFocused = { false };
+    private boolean[] searchFocused = {false};
     private JPanel inputBarPanel;
     private JPanel chatHeaderPanel;
 
-    private static final Image ICON_ADD = new ImageIcon("Icons/AddUser.png").getImage();
-    private static final Image ICON_INFO = new ImageIcon("Icons/Info.png").getImage();
-    private static final Image ICON_SEND = new ImageIcon("Icons/SendMessage.png").getImage();
-    private static final Image ICON_USER = new ImageIcon("Icons/UserDefaultpfp.png").getImage();
+    private static final Image ICON_ADD = ImageLoader.load("Icons/AddUser.png").getImage();
+    private static final Image ICON_INFO = ImageLoader.load("Icons/Info.png").getImage();
+    private static final Image ICON_SEND = ImageLoader.load("Icons/SendMessage.png").getImage();
+    private static final Image ICON_USER = ImageLoader.load("Icons/UserDefaultpfp.png").getImage();
 
     // CONSTRUCTOR
     public Chat() {
@@ -67,7 +69,6 @@ public class Chat extends JFrame {
         setMinimumSize(new Dimension(800, 500));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
 
         // dejar de seleccionar contacto al dar click fuera
         Toolkit.getDefaultToolkit().addAWTEventListener(evt -> {
@@ -173,8 +174,9 @@ public class Chat extends JFrame {
         contactListPanel = new JPanel();
         contactListPanel.setLayout(new BoxLayout(contactListPanel, BoxLayout.Y_AXIS));
         contactListPanel.setBackground(BG_PANEL);
-        for (Contact c : contacts)
+        for (Contact c : contacts) {
             contactListPanel.add(buildContactRow(c));
+        }
         contactListPanel.add(Box.createVerticalGlue());
 
         JScrollPane listScroll = styledScroll(contactListPanel);
@@ -264,8 +266,9 @@ public class Chat extends JFrame {
 
             private void doFilter() {
                 String q = searchField.getText();
-                if (!q.equals("Buscar usuarios..."))
+                if (!q.equals("Buscar usuarios...")) {
                     filterContacts(q);
+                }
             }
         });
 
@@ -283,8 +286,9 @@ public class Chat extends JFrame {
         contactListPanel.removeAll();
         String q = query.toLowerCase().trim();
         for (Contact c : contacts) {
-            if (q.isEmpty() || c.name.toLowerCase().contains(q))
+            if (q.isEmpty() || c.name.toLowerCase().contains(q)) {
                 contactListPanel.add(buildContactRow(c));
+            }
         }
         contactListPanel.add(Box.createVerticalGlue());
         contactListPanel.revalidate();
@@ -292,7 +296,7 @@ public class Chat extends JFrame {
     }
 
     private JPanel buildContactRow(Contact contact) {
-        boolean[] hov = { false };
+        boolean[] hov = {false};
         JPanel row = new JPanel(new BorderLayout(12, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -335,7 +339,7 @@ public class Chat extends JFrame {
 
         JPanel info = new JPanel(new GridLayout(2, 1, 0, 2));
         info.setOpaque(false);
-        JLabel nameLbl = new JLabel(contact.name);
+        JLabel nameLbl = new JLabel(contact.name + (contact.muted ? " \uD83D\uDD07" : ""));
         nameLbl.setFont(FONT_NAME);
         nameLbl.setForeground(TEXT_PRIMARY);
         JLabel prevLbl = new JLabel(contact.lastMessage);
@@ -354,8 +358,9 @@ public class Chat extends JFrame {
         timeLbl.setAlignmentX(Component.RIGHT_ALIGNMENT);
         right.add(timeLbl);
         right.add(Box.createVerticalStrut(4));
-        if (contact.unread > 0)
+        if (contact.unread > 0) {
             right.add(buildBadge(contact.unread));
+        }
         row.add(right, BorderLayout.EAST);
 
         return row;
@@ -457,7 +462,7 @@ public class Chat extends JFrame {
         left.add(nameStatus, BorderLayout.CENTER);
 
         // Botón info (i)
-        boolean[] ihov = { false };
+        boolean[] ihov = {false};
         JPanel infoBtn = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
@@ -537,7 +542,7 @@ public class Chat extends JFrame {
         bar.setBorder(new EmptyBorder(12, 16, 12, 16));
 
         // Campo de texto con borde vivo
-        boolean[] inputFoc = { false };
+        boolean[] inputFoc = {false};
         JPanel inputContainer = new JPanel(new BorderLayout(6, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -583,15 +588,16 @@ public class Chat extends JFrame {
         });
         inputField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     sendMessage();
+                }
             }
         });
 
         inputContainer.add(inputField, BorderLayout.CENTER);
 
         // Botón enviar
-        boolean[] shov = { false };
+        boolean[] shov = {false};
         JPanel sendBtn = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
@@ -647,22 +653,23 @@ public class Chat extends JFrame {
     private JPopupMenu emojiPopup = null;
 
     private void showEmojiPicker() {
-        if (selectedContact == null)
+        if (selectedContact == null) {
             return;
+        }
         if (emojiPopup != null && emojiPopup.isVisible()) {
             emojiPopup.setVisible(false);
             return;
         }
 
         String[][] categories = {
-                { "\uD83D\uDE00", "\uD83D\uDE02", "\uD83D\uDE0D", "\uD83D\uDE0E", "\uD83E\uDD73", "\uD83D\uDE22",
-                        "\uD83D\uDE21", "\uD83E\uDD14", "\uD83D\uDE34", "\uD83E\uDD29" },
-                { "\uD83D\uDC4D", "\uD83D\uDC4E", "\uD83D\uDC4F", "\uD83D\uDE4C", "\uD83E\uDD1D", "\uD83D\uDCAA",
-                        "\uD83C\uDF89", "\u2764\uFE0F", "\uD83D\uDD25", "\u2B50" },
-                { "\uD83D\uDE08", "\uD83E\uDD23", "\uD83D\uDE05", "\uD83D\uDE07", "\uD83E\uDD7A", "\uD83E\uDD2F",
-                        "\uD83D\uDE24", "\uD83E\uDD17", "\uD83D\uDE0F", "\uD83D\uDE43" },
-                { "\uD83C\uDF55", "\uD83C\uDFAE", "\u26BD", "\uD83C\uDFC6", "\uD83C\uDFAF", "\uD83D\uDC80",
-                        "\uD83D\uDC7B", "\uD83E\uDD16", "\uD83D\uDC36", "\uD83D\uDC31" }
+            {"\uD83D\uDE00", "\uD83D\uDE02", "\uD83D\uDE0D", "\uD83D\uDE0E", "\uD83E\uDD73", "\uD83D\uDE22",
+                "\uD83D\uDE21", "\uD83E\uDD14", "\uD83D\uDE34", "\uD83E\uDD29"},
+            {"\uD83D\uDC4D", "\uD83D\uDC4E", "\uD83D\uDC4F", "\uD83D\uDE4C", "\uD83E\uDD1D", "\uD83D\uDCAA",
+                "\uD83C\uDF89", "\u2764\uFE0F", "\uD83D\uDD25", "\u2B50"},
+            {"\uD83D\uDE08", "\uD83E\uDD23", "\uD83D\uDE05", "\uD83D\uDE07", "\uD83E\uDD7A", "\uD83E\uDD2F",
+                "\uD83D\uDE24", "\uD83E\uDD17", "\uD83D\uDE0F", "\uD83D\uDE43"},
+            {"\uD83C\uDF55", "\uD83C\uDFAE", "\u26BD", "\uD83C\uDFC6", "\uD83C\uDFAF", "\uD83D\uDC80",
+                "\uD83D\uDC7B", "\uD83E\uDD16", "\uD83D\uDC36", "\uD83D\uDC31"}
         };
 
         JPanel picker = new JPanel(new BorderLayout(0, 6));
@@ -694,13 +701,15 @@ public class Chat extends JFrame {
 
                     public void mouseClicked(MouseEvent e) {
                         String cur = inputField.getText();
-                        if (cur.equals("Escribe un mensaje..."))
+                        if (cur.equals("Escribe un mensaje...")) {
                             cur = "";
+                        }
                         inputField.setText(cur + em);
                         inputField.setForeground(TEXT_PRIMARY);
                         inputField.requestFocusInWindow();
-                        if (emojiPopup != null)
+                        if (emojiPopup != null) {
                             emojiPopup.setVisible(false);
+                        }
                     }
                 });
                 grid.add(lbl);
@@ -720,8 +729,9 @@ public class Chat extends JFrame {
 
     // MULTIMEDIA
     private void openFilePicker() {
-        if (selectedContact == null)
+        if (selectedContact == null) {
             return;
+        }
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Enviar archivo");
         fc.setAcceptAllFileFilterUsed(true);
@@ -753,17 +763,23 @@ public class Chat extends JFrame {
 
     // MENÚ INFO (botón i)
     private void showInfoMenu(Component anchor) {
-        if (selectedContact == null)
+        if (selectedContact == null) {
             return;
+        }
 
         JPopupMenu menu = darkPopup();
         addMenuItem(menu, "Ver perfil completo", TEXT_PRIMARY, () -> JOptionPane.showMessageDialog(this,
-                "Usuario: " + selectedContact.name + "\nEstado: " +
-                        (selectedContact.online ? "En l\u00ednea" : "Desconectado"),
+                "Usuario: " + selectedContact.name + "\nEstado: "
+                + (selectedContact.online ? "En l\u00ednea" : "Desconectado"),
                 "Perfil", JOptionPane.INFORMATION_MESSAGE));
 
-        addMenuItem(menu, "Silenciar notificaciones", TEXT_PRIMARY,
-                () -> showToast("Silenciado: " + selectedContact.name));
+        addMenuItem(menu, selectedContact.muted ? "Activar notificaciones" : "Silenciar notificaciones", TEXT_PRIMARY,
+                () -> {
+                    selectedContact.muted = !selectedContact.muted;
+                    showToast((selectedContact.muted ? "Silenciado: " : "Notificaciones activadas: ") + selectedContact.name);
+                    headerNameLabel.setText(selectedContact.name + (selectedContact.muted ? " \uD83D\uDD07" : ""));
+                    refreshContactList();
+                });
 
         JPanel divider = new JPanel();
         divider.setBackground(BORDER_CARD);
@@ -775,8 +791,9 @@ public class Chat extends JFrame {
             int r = JOptionPane.showConfirmDialog(this,
                     "¿Bloquear a " + selectedContact.name + "?\nEsta persona dejará de aparecer en tu lista.",
                     "Bloquear usuario", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (r == JOptionPane.YES_OPTION)
+            if (r == JOptionPane.YES_OPTION) {
                 blockContact(selectedContact);
+            }
         });
 
         addMenuItem(menu, "Reportar usuario", RED_DANGER, () -> JOptionPane.showMessageDialog(this,
@@ -792,10 +809,12 @@ public class Chat extends JFrame {
         conversations.remove(c.name);
         selectedContact = null;
         headerNameLabel.setText("Selecciona un chat");
-        if (chatHeaderPanel != null)
+        if (chatHeaderPanel != null) {
             chatHeaderPanel.setVisible(false);
-        if (inputBarPanel != null)
+        }
+        if (inputBarPanel != null) {
             inputBarPanel.setVisible(false);
+        }
         headerStatusLabel.setText("\u2014");
         headerStatusLabel.setForeground(TEXT_SECONDARY);
         chatMessagesPanel.removeAll();
@@ -882,11 +901,13 @@ public class Chat extends JFrame {
     private void selectContact(Contact contact) {
         selectedContact = contact;
         contact.unread = 0;
-        if (inputBarPanel != null)
+        if (inputBarPanel != null) {
             inputBarPanel.setVisible(true);
-        if (chatHeaderPanel != null)
+        }
+        if (chatHeaderPanel != null) {
             chatHeaderPanel.setVisible(true);
-        headerNameLabel.setText(contact.name);
+        }
+        headerNameLabel.setText(contact.name + (contact.muted ? " \uD83D\uDD07" : ""));
         headerStatusLabel.setText(contact.online ? "En l\u00ednea" : "Desconectado");
         headerStatusLabel.setForeground(contact.online ? TEXT_ONLINE : TEXT_SECONDARY);
         refreshMessages();
@@ -922,17 +943,20 @@ public class Chat extends JFrame {
 
     private void refreshContactList() {
         String q = searchField.getText();
-        if (q.equals("Buscar usuarios..."))
+        if (q.equals("Buscar usuarios...")) {
             q = "";
+        }
         filterContacts(q);
     }
 
     private void sendMessage() {
-        if (selectedContact == null)
+        if (selectedContact == null) {
             return;
+        }
         String text = inputField.getText().trim();
-        if (text.isEmpty() || text.equals("Escribe un mensaje..."))
+        if (text.isEmpty() || text.equals("Escribe un mensaje...")) {
             return;
+        }
 
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
         conversations.computeIfAbsent(selectedContact.name, k -> new ArrayList<>())
@@ -948,11 +972,12 @@ public class Chat extends JFrame {
 
         // Respuesta automática aleatoria
         javax.swing.Timer t = new javax.swing.Timer(900, e -> {
-            if (selectedContact == null)
+            if (selectedContact == null) {
                 return;
-            String[] rs = { "Claro que si", "Jaja ok", "Cuando jugamos?", "Gg!",
-                    "Oye cuentame mas", "Excelente",
-                    "Exacto!", "Jajaja", "Ok ok", "Buenas noches!" };
+            }
+            String[] rs = {"Claro que si", "Jaja ok", "Cuando jugamos?", "Gg!",
+                "Oye cuentame mas", "Excelente",
+                "Exacto!", "Jajaja", "Ok ok", "Buenas noches!"};
             String r = rs[new Random().nextInt(rs.length)];
             String rt = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
             conversations.get(selectedContact.name).add(new Message(r, "text", true, rt));
@@ -973,8 +998,9 @@ public class Chat extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (getComponentCount() == 0)
+                if (getComponentCount() == 0) {
                     return;
+                }
                 Graphics2D g2 = aa(g);
                 g2.setColor(new Color(0x3A, 0x3A, 0x3A));
                 g2.setStroke(new BasicStroke(1f));
@@ -995,7 +1021,7 @@ public class Chat extends JFrame {
 
     private JPanel buildMessageBubble(Message msg) {
         JPanel wrapper = new JPanel(new FlowLayout(
-                msg.incoming ? FlowLayout.LEFT : FlowLayout.RIGHT, 0, 0)) {
+                msg.incoming ? FlowLayout.LEFT : FlowLayout.RIGHT, 6, 0)) {
             @Override
             public Dimension getMaximumSize() {
                 return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
@@ -1003,6 +1029,47 @@ public class Chat extends JFrame {
         };
         wrapper.setOpaque(false);
 
+        // Avatar del usuario para mensajes salientes
+        if (!msg.incoming) {
+            JPanel myAvatar = new JPanel() {
+                @Override public Dimension getPreferredSize() { return new Dimension(34, 34); }
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    try {
+                        String fp = (Usuario.getUsuarioActual() != null)
+                                ? Usuario.getUsuarioActual().getFotoPerfil()
+                                : "Icons/UserDefaultpfp.png";
+                        if (fp == null || fp.isEmpty()) fp = "Icons/UserDefaultpfp.png";
+                        ImageIcon icon = ImageLoader.load(fp);
+                        if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
+                        
+                        Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 30, 30);
+                        g2.setClip(clip);
+                        g2.drawImage(icon.getImage(), 2, 2, 30, 30, null);
+                        g2.setClip(null);
+                        g2.setColor(GREEN_MAIN);
+                        g2.setStroke(new BasicStroke(1.5f));
+                        g2.drawOval(2, 2, 29, 29);
+                    } catch (Exception ex) {
+                        g2.setColor(new Color(40, 60, 40));
+                        g2.fillOval(2, 2, 30, 30);
+                    }
+                    g2.dispose();
+                }
+            };
+            myAvatar.setOpaque(false);
+            wrapper.add(bubble(msg));
+            wrapper.add(myAvatar);
+            return wrapper;
+        }
+
+        wrapper.add(bubble(msg));
+        return wrapper;
+    }
+
+    private JPanel bubble(Message msg) {
         JPanel bubble = new JPanel(new BorderLayout(0, 4)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -1027,8 +1094,8 @@ public class Chat extends JFrame {
             JLabel iconLbl = new JLabel(ico);
             iconLbl.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 26));
             String kind = "image".equals(msg.type) ? "Imagen" : "Archivo";
-            JLabel nameLbl = new JLabel("<html><span style='color:#f0f0f0'><b>" +
-                    msg.text + "</b></span><br><span style='color:#888;font-size:10'>" + kind + "</span></html>");
+            JLabel nameLbl = new JLabel("<html><span style='color:#f0f0f0'><b>"
+                    + msg.text + "</b></span><br><span style='color:#888;font-size:10'>" + kind + "</span></html>");
             nameLbl.setFont(FONT_PREVIEW);
             card.add(iconLbl, BorderLayout.WEST);
             card.add(nameLbl, BorderLayout.CENTER);
@@ -1051,17 +1118,17 @@ public class Chat extends JFrame {
         time.setHorizontalAlignment(msg.incoming ? SwingConstants.LEFT : SwingConstants.RIGHT);
         bubble.add(time, BorderLayout.SOUTH);
 
-        wrapper.add(bubble);
-        return wrapper;
+        return bubble;
     }
 
     // HELPERS
     interface Painter {
+
         void paint(Graphics2D g2);
     }
 
     private JPanel makeIconBtn(Runnable action, Painter painter) {
-        boolean[] hov = { false };
+        boolean[] hov = {false};
         JPanel btn = new JPanel() {
             @Override
             public Dimension getPreferredSize() {
@@ -1225,8 +1292,10 @@ public class Chat extends JFrame {
 
     // CLASES DE DATOS
     static class Contact {
+
         String name, lastMessage, time;
         boolean online;
+        boolean muted;
         int unread;
         long timestamp;
         private static long counter = 0;
@@ -1237,11 +1306,13 @@ public class Chat extends JFrame {
             online = on;
             unread = u;
             time = t;
+            muted = false;
             timestamp = System.currentTimeMillis() - (counter++ * 1000000L);
         }
     }
 
     static class Message {
+
         String text, type, time, filePath;
         boolean incoming;
 
@@ -1255,6 +1326,7 @@ public class Chat extends JFrame {
 
     // SCROLLBAR SLIM
     static class SlimScrollBarUI extends BasicScrollBarUI {
+
         @Override
         protected void configureScrollBarColors() {
             thumbColor = new Color(0x3A, 0x3A, 0x3A);
@@ -1381,7 +1453,6 @@ public class Chat extends JFrame {
         // Campana de notificaciones (global)
         JPanel bellPanel = CampanaNotificaciones.crear(this);
 
-
         // Avatar del usuario con popup de Cerrar sesión
         JPanel avatarPanel = new JPanel() {
             @Override
@@ -1398,13 +1469,15 @@ public class Chat extends JFrame {
                     String fotoPath = (Usuario.getUsuarioActual() != null)
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                    if (fotoPath == null || fotoPath.isEmpty())
+                        fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
 
                     // Clip circular
                     Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(icon.getImage(), 2, 2, 38, 38, null);
                     g2.setClip(null);
 
                     // Borde verde online premium
@@ -1487,6 +1560,7 @@ public class Chat extends JFrame {
 
         JButton btn = new JButton(text) {
             boolean hover = false;
+
             {
                 addMouseListener(new MouseAdapter() {
                     @Override
@@ -1544,7 +1618,7 @@ public class Chat extends JFrame {
         g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
                 (size + fm.getAscent() - fm.getDescent()) / 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     private JPanel makeBellWithBadge(int count) {

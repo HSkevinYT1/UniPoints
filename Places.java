@@ -162,13 +162,14 @@ public class Places extends JFrame {
                     String fotoPath = (Usuario.getUsuarioActual() != null)
                             ? Usuario.getUsuarioActual().getFotoPerfil()
                             : "Icons/UserDefaultpfp.png";
-                    ImageIcon icon = new ImageIcon(fotoPath);
-                    Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                    ImageIcon icon = ImageLoader.load(fotoPath);
+                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
 
                     // Clip circular
                     Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
                     g2.setClip(clip);
-                    g2.drawImage(img, 2, 2, 38, 38, null);
+                    g2.drawImage(icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH), 2, 2, 38, 38, null);
                     g2.setClip(null);
 
                     // Borde verde online premium
@@ -810,7 +811,7 @@ public class Places extends JFrame {
         int ty = (size + fm.getAscent() - fm.getDescent()) / 2;
         g2.drawString(text, tx, ty);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // ── Moneda ───────────────────────────────────────────────
@@ -829,7 +830,7 @@ public class Places extends JFrame {
         g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
                 (size + fm.getAscent() - fm.getDescent()) / 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // ── Campana con badge ────────────────────────────────────
@@ -879,7 +880,7 @@ public class Places extends JFrame {
         Usuario actual = Usuario.getUsuarioActual();
         if (actual != null && actual.getFotoPerfil() != null && !actual.getFotoPerfil().isEmpty()) {
             try {
-                customImg = new ImageIcon(actual.getFotoPerfil()).getImage();
+                customImg = ImageLoader.load(actual.getFotoPerfil()).getImage();
                 hasCustomPhoto = true;
             } catch (Exception e) {
                 // fall back to default
@@ -909,7 +910,7 @@ public class Places extends JFrame {
         g2.setColor(GREEN);
         g2.fillOval(size - 10, size - 10, 10, 10);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // ── Ícono ubicación ──────────────────────────────────────
@@ -933,7 +934,7 @@ public class Places extends JFrame {
         g2.setColor(new Color(0x14532D));
         g2.fillOval(cx - r / 2, size / 4 + r / 2, r, r);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // ── Ícono regalo ─────────────────────────────────────────
@@ -945,7 +946,7 @@ public class Places extends JFrame {
         g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, size));
         g2.drawString("🎁", 0, size - 2);
         g2.dispose();
-        return new ImageIcon(img);
+        return ImageLoader.load(img);
     }
 
     // ════════════════════════════════════════════════════════

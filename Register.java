@@ -43,9 +43,9 @@ public class Register extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Logo principal
-        ImageIcon logoIcon = new ImageIcon("Icons/AppLogo.jpeg");
+        ImageIcon logoIcon = ImageLoader.load("Icons/AppLogo.jpeg");
         Image scaledLogo = logoIcon.getImage().getScaledInstance(400, -1, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo), SwingConstants.CENTER);
+        JLabel logoLabel = new JLabel(ImageLoader.load(scaledLogo), SwingConstants.CENTER);
         gbc.gridy = 0;
         centerContainer.add(logoLabel, gbc);
 
@@ -96,36 +96,36 @@ public class Register extends JFrame {
         rightPanel.add(subtitle);
 
         // Campo: Nombre completo
-        ImageIcon userIcon = new ImageIcon("Icons/user.png");
+        ImageIcon userIcon = ImageLoader.load("Icons/user.png");
         Image scaledUser = userIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-        RoundedTextField nameField = new RoundedTextField("Ingresa tu nombre completo", new ImageIcon(scaledUser));
+        RoundedTextField nameField = new RoundedTextField("Ingresa tu nombre completo", ImageLoader.load(scaledUser));
         nameField.setBounds(70, 105, 430, 55);
         rightPanel.add(nameField);
 
         // Campo: Correo
-        ImageIcon mailIcon = new ImageIcon("Icons/email.png");
+        ImageIcon mailIcon = ImageLoader.load("Icons/email.png");
         Image scaledMail = mailIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-        RoundedTextField emailField = new RoundedTextField("Ingresa tu correo", new ImageIcon(scaledMail));
+        RoundedTextField emailField = new RoundedTextField("Ingresa tu correo", ImageLoader.load(scaledMail));
         emailField.setBounds(70, 175, 430, 55);
         rightPanel.add(emailField);
 
         // Campo: Nombre de usuario
         Image scaledUser2 = userIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-        RoundedTextField usernameField = new RoundedTextField("Crea tu nombre de usuario", new ImageIcon(scaledUser2));
+        RoundedTextField usernameField = new RoundedTextField("Crea tu nombre de usuario", ImageLoader.load(scaledUser2));
         usernameField.setBounds(70, 245, 430, 55);
         rightPanel.add(usernameField);
 
         // Campo: Contraseña
-        ImageIcon lockIcon = new ImageIcon("Icons/lock.png");
+        ImageIcon lockIcon = ImageLoader.load("Icons/lock.png");
         Image scaledLock = lockIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-        RoundedPasswordField passField = new RoundedPasswordField("Ingresa tu contraseña", new ImageIcon(scaledLock));
+        RoundedPasswordField passField = new RoundedPasswordField("Ingresa tu contraseña", ImageLoader.load(scaledLock));
         passField.setBounds(70, 315, 430, 55);
         rightPanel.add(passField);
 
         // Campo: Repetir contraseña
         Image scaledLock2 = lockIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
         RoundedPasswordField confirmPassField = new RoundedPasswordField("Repite tu contraseña",
-                new ImageIcon(scaledLock2));
+                ImageLoader.load(scaledLock2));
         confirmPassField.setBounds(70, 385, 430, 55);
         rightPanel.add(confirmPassField);
 

@@ -40,9 +40,9 @@ public class Ranking extends JFrame {
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Arial", Font.BOLD, 32));
         try {
-            ImageIcon rawTrophy = new ImageIcon("Icons/trophy.png");
+            ImageIcon rawTrophy = ImageLoader.load("Icons/trophy.png");
             Image imgTrophy = rawTrophy.getImage().getScaledInstance(35, 35, Image.SCALE_SMOOTH);
-            titulo.setIcon(new ImageIcon(imgTrophy));
+            titulo.setIcon(ImageLoader.load(imgTrophy));
             titulo.setIconTextGap(15);
         } catch (Exception e) {
             // fallback
@@ -147,9 +147,8 @@ public class Ranking extends JFrame {
                 boolean pintado = false;
                 if (fotoPerfilPath != null && !fotoPerfilPath.isEmpty()) {
                     try {
-                        File imgFile = new File(fotoPerfilPath);
-                        if (imgFile.exists()) {
-                            ImageIcon icon = new ImageIcon(fotoPerfilPath);
+                        ImageIcon icon = ImageLoader.load(fotoPerfilPath);
+                        if (icon != null && icon.getIconWidth() > 0) {
                             Image img = icon.getImage();
                             g2.setClip(new Ellipse2D.Double(0, 0, size, size));
                             g2.drawImage(img, 0, 0, size, size, null);

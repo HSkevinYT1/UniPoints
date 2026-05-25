@@ -21,8 +21,8 @@ public class RoundedPasswordField extends JPasswordField {
         this.icon = icon;
 
         try {
-            ImageIcon rawIcon = new ImageIcon("Icons/password_hide.png");
-            eyeIcon = new ImageIcon(
+            ImageIcon rawIcon = ImageLoader.load("Icons/password_hide.png");
+            eyeIcon = ImageLoader.load(
                     rawIcon.getImage().getScaledInstance(EYE_ICON_SIZE, EYE_ICON_SIZE, Image.SCALE_SMOOTH));
         } catch (Exception e) {
             System.err.println("No se pudo cargar el icono Icons/password_hide.png");

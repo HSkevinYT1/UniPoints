@@ -169,22 +169,22 @@ public class History extends JFrame {
                                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                                 try {
-                                        String fotoPath = (Usuario.getUsuarioActual() != null)
-                                                        ? Usuario.getUsuarioActual().getFotoPerfil()
-                                                        : "Icons/UserDefaultpfp.png";
-                                        ImageIcon icon = new ImageIcon(fotoPath);
-                                        Image img = icon.getImage().getScaledInstance(38, 38, Image.SCALE_SMOOTH);
+                                    String fotoPath = (Usuario.getUsuarioActual() != null)
+                                            ? Usuario.getUsuarioActual().getFotoPerfil()
+                                            : "Icons/UserDefaultpfp.png";
+                                    if (fotoPath == null || fotoPath.isEmpty()) fotoPath = "Icons/UserDefaultpfp.png";
+                                    ImageIcon icon = ImageLoader.load(fotoPath);
+                                    if (icon.getIconWidth() == -1) icon = ImageLoader.load("Icons/UserDefaultpfp.png");
 
-                                        // Clip circular
-                                        Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
-                                        g2.setClip(clip);
-                                        g2.drawImage(img, 2, 2, 38, 38, null);
-                                        g2.setClip(null);
+                                    Shape clip = new java.awt.geom.Ellipse2D.Float(2, 2, 38, 38);
+                                    g2.setClip(clip);
+                                    g2.drawImage(icon.getImage(), 2, 2, 38, 38, null);
+                                    g2.setClip(null);
 
-                                        // Borde verde online premium
-                                        g2.setColor(GREEN);
-                                        g2.setStroke(new BasicStroke(1.5f));
-                                        g2.drawOval(2, 2, 37, 37);
+                                    // Borde verde online premium
+                                    g2.setColor(GREEN);
+                                    g2.setStroke(new BasicStroke(1.5f));
+                                    g2.drawOval(2, 2, 37, 37);
                                 } catch (Exception e) {
                                         g2.setColor(new Color(40, 50, 38));
                                         g2.fillOval(2, 2, 38, 38);
@@ -317,7 +317,7 @@ public class History extends JFrame {
                 g2.drawString("UP", (size - fm.stringWidth("UP")) / 2,
                                 (size + fm.getAscent() - fm.getDescent()) / 2);
                 g2.dispose();
-                return new ImageIcon(img);
+                return ImageLoader.load(img);
         }
 
         private JPanel makeBellWithBadge(int count) {
