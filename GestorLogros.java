@@ -9,13 +9,14 @@ public class GestorLogros {
     private GestorLogros() {
         listaLogros = new ArrayList<>();
         // Inicializamos los logros aquí una sola vez al arrancar el juego
-        listaLogros.add(new Logros.Logro("si", 200));
-        listaLogros.add(new Logros.Logro("no", 300));
-        listaLogros.add(new Logros.Logro("haz que juancacorro haga algo (este logro es imposible)", 100));
-        listaLogros.add(new Logros.Logro("tal vez", 500));
-        listaLogros.add(new Logros.Logro("123456", 200));
-        listaLogros.add(new Logros.Logro("your mom", 150));
-        listaLogros.add(new Logros.Logro("your dad", 150));
+        listaLogros.add(new Logros.Logro("Caballo Imparable", 500));
+        listaLogros.add(new Logros.Logro("Cantado!", 500));
+        listaLogros.add(new Logros.Logro("Francotirador del Area", 500));
+        listaLogros.add(new Logros.Logro("Jackpot Supremo", 500));
+        listaLogros.add(new Logros.Logro("La Mano del Destino", 500));
+        listaLogros.add(new Logros.Logro("Nervios de Acero", 500));
+        listaLogros.add(new Logros.Logro("Todo al Rojo", 500));
+        listaLogros.add(new Logros.Logro("21 Perfecto", 500));
     }
 
     public static synchronized GestorLogros getInstancia() {

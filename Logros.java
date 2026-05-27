@@ -97,7 +97,7 @@ public class Logros {
         private boolean completado;
         private boolean reclamado;
 
-        public Logro(String descripcion, int recompensaMonedas) {
+        public Logro(String descripcion, int recompensaMonedas,) {
             this.descripcion = descripcion;
             this.recompensaMonedas = recompensaMonedas;
             this.completado = false;
